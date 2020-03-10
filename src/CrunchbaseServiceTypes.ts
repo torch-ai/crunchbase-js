@@ -9,7 +9,6 @@ export interface IServiceOptions {
 type BooleanOrNull = Boolean | null;
 /** A URL is a fully-qualified (http or https) website reference. */
 type UrlString = string;
-// type DATE = string; - Have to replace this from their docs. We can't go changing the real definition
 /** A Path in the Crunchbase REST API is a relative path to the detail for an Item. */
 type Path = string;
 type FloatOrNull = number;
@@ -17,6 +16,48 @@ type Integer = number;
 /** A Timestamp in the Crunchbase API is Unix Time, or seconds since the epoch. */
 type Timestamp = string;
 type UUID = string;
+
+/**
+ * @link https://data.crunchbase.com/docs/acquisitions
+ */
+export enum AcquisitionPaymentTypes {
+  unknown = "",
+  cash = "cash", // Acquired for all cash
+  stock = "stock", // Acquired for stock
+  cash_and_stock = "cash_and_stock" // Acquired for a combination of cash and stock
+}
+
+/**
+ * @link https://data.crunchbase.com/docs/acquisitions
+ */
+export enum AcquisitionTypes {
+  unknown = "",
+  Acquisition = "Acquisition", // Acquisition of the Organization in its entirety.
+  AcquiHire = "Acqui-Hire", // Acquisition of the Organization for the primary purpose of acquiring the talent.
+  LBO = "LBO" // Leveraged Buy-Out
+}
+
+/**
+ * @link https://data.crunchbase.com/docs/acquisitions
+ */
+export enum AcquisitionStatuses {
+  unknown = "",
+  Pending = "Pending", // Announced but not yet complete
+  Complete = "Complete", // Completed and closed
+  Cancelled = "Cancelled" // Cancelled after announcement
+}
+
+/**
+ * @link https://data.crunchbase.com/docs/acquisitions
+ */
+export enum AcquisitionDispositions {
+  unknown = "",
+  SeparateEntity = "Separate Entity", // The acquired Organization is maintained as a separate legal entity
+  Product = "Product", // The acquired Organization is rolled into the acquirer as a Product
+  Division = "Division", // The acquired Organization becomes a Division of the acquirer
+  Subsidiary = "Subsidiary", // The acquired Organization becomes a Subsidiary of the acquirer
+  Combined = "Combined" // The acquired Organization is combined / merged with the acquirer
+}
 
 /**
  * @link https://data.crunchbase.com/docs/currency-codes
@@ -232,15 +273,53 @@ export enum FundingTypes {
   series_unknown = "series_unknown" // Venture - Series Unknown
 }
 
-/**
- * @link https://data.crunchbase.com/docs/website-types
- */
-export enum WebsiteType {
-  unknown = "",
-  facebook = "facebook",
-  linkedin = "linkedin",
-  twitter = "twitter",
-  homepage = "homepage"
+enum Relationships {
+  acquired_by = "acquired_by",
+  acquiree = "acquiree",
+  acquirer = "acquirer",
+  acquisitions = "acquisitions",
+  advisory_roles = "advisory_roles",
+  board_members_and_advisors = "board_members_and_advisors",
+  categories = "categories",
+  competitors = "competitors",
+  current_team = "current_team",
+  customers = "customers",
+  degrees = "degrees",
+  featured_team = "featured_team",
+  founded_companies = "founded_companies",
+  founders = "founders",
+  funded_company = "funded_company",
+  funded_organization = "funded_organization",
+  funding_round = "funding_round",
+  funding_rounds = "funding_rounds",
+  funds = "funds",
+  headquarters = "headquarters",
+  images = "images",
+  invested_in = "invested_in",
+  investor = "investor",
+  investors = "investors",
+  investments = "investments",
+  ipo = "ipo",
+  jobs = "jobs",
+  members = "members",
+  memberships = "memberships",
+  news = "news",
+  offices = "offices",
+  organization = "organization",
+  owned_by = "owned_by",
+  parent_locations = "parent_locations",
+  past_team = "past_team",
+  person = "person",
+  primary_affiliation = "primary_affiliation",
+  primary_image = "primary_image",
+  primary_location = "primary_location",
+  products = "products",
+  school = "school",
+  stock_exchange = "stock_exchange",
+  sub_organizations = "sub_organizations",
+  venture_firm = "venture_firm",
+  videos = "videos",
+  websites = "websites"
 }
 
 /**
@@ -265,45 +344,14 @@ export enum TrustCode {
 }
 
 /**
- * @link https://data.crunchbase.com/docs/acquisitions
+ * @link https://data.crunchbase.com/docs/website-types
  */
-export enum AcquisitionPaymentTypes {
+export enum WebsiteType {
   unknown = "",
-  cash = "cash", // Acquired for all cash
-  stock = "stock", // Acquired for stock
-  cash_and_stock = "cash_and_stock" // Acquired for a combination of cash and stock
-}
-
-/**
- * @link https://data.crunchbase.com/docs/acquisitions
- */
-export enum AcquisitionTypes {
-  unknown = "",
-  Acquisition = "Acquisition", // Acquisition of the Organization in its entirety.
-  AcquiHire = "Acqui-Hire", // Acquisition of the Organization for the primary purpose of acquiring the talent.
-  LBO = "LBO" // Leveraged Buy-Out
-}
-
-/**
- * @link https://data.crunchbase.com/docs/acquisitions
- */
-export enum AcquisitionStatuses {
-  unknown = "",
-  Pending = "Pending", // Announced but not yet complete
-  Complete = "Complete", // Completed and closed
-  Cancelled = "Cancelled" // Cancelled after announcement
-}
-
-/**
- * @link https://data.crunchbase.com/docs/acquisitions
- */
-export enum AcquisitionDispositions {
-  unknown = "",
-  SeparateEntity = "Separate Entity", // The acquired Organization is maintained as a separate legal entity
-  Product = "Product", // The acquired Organization is rolled into the acquirer as a Product
-  Division = "Division", // The acquired Organization becomes a Division of the acquirer
-  Subsidiary = "Subsidiary", // The acquired Organization becomes a Subsidiary of the acquirer
-  Combined = "Combined" // The acquired Organization is combined / merged with the acquirer
+  facebook = "facebook",
+  linkedin = "linkedin",
+  twitter = "twitter",
+  homepage = "homepage"
 }
 
 /**
@@ -341,12 +389,6 @@ export class Address {
 
 /**
  * @link https://data.crunchbase.com/docs/acquisition
- *
- * Relationships:
- * - acquirer one-to-one Organization
- * - acquiree one-to-one Organization
- * - images one-to-one Image
- * - news one-to-many News
  */
 export class Acquisition {
   public api_path: Path = "";
@@ -373,6 +415,13 @@ export class Acquisition {
   constructor(data: Partial<Acquisition> = {}) {
     Object.assign(this, data);
   }
+}
+
+export enum AcquisitionRelationships {
+  acquirer = Relationships.acquirer,
+  acquiree = Relationships.acquiree,
+  images = Relationships.images,
+  news = Relationships.news
 }
 
 /**
@@ -407,10 +456,6 @@ export class Category {
 
 /**
  * @link https://data.crunchbase.com/docs/degree
- *
- * Relationships:
- * - school one-to-one Organization
- * - person one-to-one Person
  */
 export class Degree {
   /** "Degree" */
@@ -431,18 +476,13 @@ export class Degree {
   }
 }
 
+export enum DegreeRelationships {
+  school = Relationships.school,
+  person = Relationships.person
+}
+
 /**
  * @link https://data.crunchbase.com/docs/fund-raise
- *
- * Relationships:
- * - venture_firm one-to-one Organization
- * - investor one-to-many Organization or Person
- *   Note: In our beta release this will be an empty array.
- * - images one-to-one Image
- *   Note: In our beta release this will be an empty array.
- * - videos one-to-many Video
- * - news one-to-many News
- * - websites one-to-one Website
  */
 export class Fund {
   public api_path: Path = "";
@@ -464,17 +504,17 @@ export class Fund {
   }
 }
 
+export enum FundRelationships {
+  venture_firm = Relationships.venture_firm,
+  investor = Relationships.investor, // Organization or Person Note: In our beta release this will be an empty array.
+  images = Relationships.images, // Image Note: In our beta release this will be an empty array.
+  videos = Relationships.videos,
+  news = Relationships.news,
+  websites = Relationships.websites
+}
+
 /**
  * @link https://data.crunchbase.com/docs/funding-round
- *
- * Relationships:
- * - investments one-to-many InvestorInvestment
- * - funded_organization one-to-one Organization
- * - images one-to-one Image
- * - videos one-to-many Video
- *   Note: This is a deprecated field and will be returned as an empty array
- * - news one-to-many News
- * - websites one-to-one Website
  */
 export class FundingRound {
   public api_path: Path = "";
@@ -512,6 +552,16 @@ export class FundingRound {
   }
 }
 
+export enum FundingRoundRelationships {
+  investments = Relationships.investments,
+  funded_organization = Relationships.funded_organization,
+  images = Relationships.images,
+  /** @deprecated */
+  videos = Relationships.videos,
+  news = Relationships.news,
+  websites = Relationships.websites
+}
+
 /**
  * @link https://data.crunchbase.com/docs/image-asset
  */
@@ -536,11 +586,6 @@ export class Image {
 
 /**
  * @link https://data.crunchbase.com/docs/investor-investment
- *
- * Relationships:
- * - funding_round many-to-one FundingRound
- * - invested_in many-to-one Organization or Person
- * - investors one-to-many Organization or Person
  */
 export class Investment {
   /** "Investment" */
@@ -560,17 +605,14 @@ export class Investment {
   }
 }
 
+export enum InvestmentRelationships {
+  funding_round = Relationships.funding_round, // many-to-one FundingRound
+  invested_in = Relationships.invested_in, // many-to-one Organization or Person
+  investors = Relationships.investors // one-to-many Organization or Person
+}
+
 /**
  * @link https://data.crunchbase.com/docs/ipo
- *
- * Relationships:
- * - funded_company one-to-one Organization
- * - stock_exchange one-to-one
- * - images one-to-many Image
- * - videos one-to-many V
- *   Note: This field has been deprecated and will return an empty array
- * - news one-to-many News
- * - websites one-to-one Website
  */
 export class Ipo {
   /** path to Ipo detail in the API */
@@ -611,12 +653,18 @@ export class Ipo {
   }
 }
 
+export enum IpoRelationships {
+  funded_company = Relationships.funded_company,
+  stock_exchange = Relationships.stock_exchange,
+  images = Relationships.images,
+  /** @deprecated */
+  videos = Relationships.videos,
+  news = Relationships.news,
+  websites = Relationships.websites
+}
+
 /**
  * @link https://data.crunchbase.com/docs/job
- *
- * Relationships:
- * - person one-to-one Person omitted on Person detail
- * - organization one-to-one Organization omitted on Organization detail
  */
 export class Job {
   /** "Job" */
@@ -637,11 +685,13 @@ export class Job {
   }
 }
 
+export enum JobRelationships {
+  person = Relationships.person,
+  organization = Relationships.organization
+}
+
 /**
  * @link https://data.crunchbase.com/docs/location
- *
- * Relationships:
- * - parent_locations one-to-many Location
  */
 export class Location {
   public web_path: Path = "";
@@ -664,6 +714,10 @@ export class Location {
   }
 }
 
+export enum LocationRelationships {
+  parent_locations = Relationships.parent_locations
+}
+
 /**
  * @link https://data.crunchbase.com/docs/press-reference
  */
@@ -683,35 +737,6 @@ export class News {
 
 /**
  * @link https://data.crunchbase.com/docs/organization
- *
- * Relationships:
- * - primary_image one-to-one Image
- * - founders one-to-many Person
- * - featured_team one-to-many Job
- * - current_team one-to-many Job
- * - past_team one-to-many Job
- * - board_members_and_advisors many-to-many Job
- * - investors many-to-many Organization or Person
- * - owned_by many-to-one Organization
- * - sub_organizations one-to-many Organization
- * - headquarters one-to-one Address
- * - offices one-to-many Address
- * - products one-to-many Note: This node has been deprecated so this will return an empty array
- * - categories many-to-many Category
- * - customers many-to-many Note: This data has been deprecated so this will return an empty array
- * - competitors many-to-many Note: This data has been deprecated so this will return an empty array
- * - members many-to-many Note: This data has been deprecated so this will return an empty array
- * - memberships many-to-one Note: This data has been deprecated so this will return an empty array
- * - funding_rounds one-to-many FundingRound
- * - investments one-to-many InvestorInvestment
- * - acquisitions one-to-many Acquisition
- * - acquired_by one-to-one Acquisition
- * - ipo one-to-one Ipo
- * - funds one-to-many Fund
- * - websites one-to-many Website
- * - images one-to-one Image
- * - videos one-to-many Note: This data has been deprecated so this will return an empty array
- * - news many-to-many News
  */
 export class Organization {
   /** unique identifier within "Organization" namespace */
@@ -768,6 +793,42 @@ export class Organization {
   }
 }
 
+export enum OrganizationRelationships {
+  primary_image = Relationships.primary_image, // one-to-one Image
+  founders = Relationships.founders, // one-to-many Person
+  featured_team = Relationships.featured_team, // one-to-many Job
+  current_team = Relationships.current_team, // one-to-many Job
+  past_team = Relationships.past_team, // one-to-many Job
+  board_members_and_advisors = Relationships.board_members_and_advisors, // many-to-many Job
+  investors = Relationships.investors, // many-to-many Organization or Person
+  owned_by = Relationships.owned_by, // many-to-one Organization
+  sub_organizations = Relationships.sub_organizations, // one-to-many Organization
+  headquarters = Relationships.headquarters, // one-to-one Address
+  offices = Relationships.offices, // one-to-many Address
+  /** @deprecated */
+  products = Relationships.products, // one-to-many Note: This node has been deprecated so this will return an empty array
+  categories = Relationships.categories, // many-to-many Category
+  /** @deprecated */
+  customers = Relationships.customers, // many-to-many Note: This data has been deprecated so this will return an empty array
+  /** @deprecated */
+  competitors = Relationships.competitors, // many-to-many Note: This data has been deprecated so this will return an empty array
+  /** @deprecated */
+  members = Relationships.members, // many-to-many Note: This data has been deprecated so this will return an empty array
+  /** @deprecated */
+  memberships = Relationships.memberships, // many-to-one Note: This data has been deprecated so this will return an empty array
+  funding_rounds = Relationships.funding_rounds, // one-to-many FundingRound
+  investments = Relationships.investments, // one-to-many InvestorInvestment
+  acquisitions = Relationships.acquisitions, // one-to-many Acquisition
+  acquired_by = Relationships.acquired_by, // one-to-one Acquisition
+  ipo = Relationships.ipo, // one-to-one Ipo
+  funds = Relationships.funds, // one-to-many Fund
+  websites = Relationships.websites, // one-to-many Website
+  images = Relationships.images, // one-to-one Image
+  /** @deprecated */
+  videos = Relationships.videos, // one-to-many Note: This data has been deprecated so this will return an empty array
+  news = Relationships.news // many-to-many News
+}
+
 /**
  * @link https://data.crunchbase.com/docs/organizationsummary
  */
@@ -803,21 +864,6 @@ export class OrganizationSummary {
 
 /**
  * @link https://data.crunchbase.com/docs/person
- *
- * Relationships:
- * - primary_affiliation one-to-one Job
- * - primary_location many-to-one Location
- * - primary_image one-to-one Image
- * - websites one-to-many Website
- * - degrees one-to-many Degree
- * - jobs one-to-many Job
- * - advisory_roles one-to-many Job
- * - founded_companies one-to-many Organization
- * - investments one-to-many InvestorInvestment
- * - memberships many-to-many Note: This relationship has been deprecated and will return null results
- * - images one-to-many Image
- * - videos one-to-many Note: This relationship has been deprecated and will return null results
- * - news many-to-many News
  */
 export class Person {
   public permalink: String = "";
@@ -851,6 +897,24 @@ export class Person {
   constructor(data: Partial<Person> = {}) {
     Object.assign(this, data);
   }
+}
+
+export enum PersonRelationships {
+  primary_affiliation = Relationships.primary_affiliation, // one-to-one Job
+  primary_location = Relationships.primary_location, // many-to-one Location
+  primary_image = Relationships.primary_image, // one-to-one Image
+  websites = Relationships.websites, // one-to-many Website
+  degrees = Relationships.degrees, // one-to-many Degree
+  jobs = Relationships.jobs, // one-to-many Job
+  advisory_roles = Relationships.advisory_roles, // one-to-many Job
+  founded_companies = Relationships.founded_companies, // one-to-many Organization
+  investments = Relationships.investments, // one-to-many InvestorInvestment
+  /** @deprecated */
+  memberships = Relationships.memberships, // many-to-many Note: This relationship has been deprecated and will return null results
+  images = Relationships.images, // one-to-many Image
+  /** @deprecated */
+  videos = Relationships.videos, // one-to-many Note: This relationship has been deprecated and will return null results
+  news = Relationships.news // many-to-many News
 }
 
 /**
