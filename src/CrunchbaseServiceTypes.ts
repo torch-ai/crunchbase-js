@@ -3,6 +3,93 @@ export interface IServiceOptions {
 }
 
 /**
+ * Non-data types
+ */
+
+class Response {
+  metadata: ResponseMetaData = new ResponseMetaData();
+  data: ResponseData = new ResponseData();
+
+  constructor(data: Partial<Response> = {}) {
+    this.metadata = new ResponseMetaData(data.metadata);
+    this.data = new ResponseData(data.data);
+  }
+}
+
+export class ResponseMetaData {
+  version: number | string = ""; // 31
+  www_path_prefix: string = ""; // "https://www.crunchbase.com"
+  api_path_prefix: string = ""; // "https://api.crunchbase.com"
+  image_path_prefix: string = ""; // "http://public.crunchbase.com/t_api_images/"
+
+  constructor(data: Partial<ResponseMetaData> = {}) {
+    Object.assign(this, data);
+  }
+}
+
+class ResponseData {
+  constructor(data: Partial<ResponseData> = {}) {
+    Object.assign(this, data);
+  }
+}
+
+class PagedResponse extends Response {
+  data: ResponseData = new PagedResponseData();
+
+  constructor(data: Partial<PagedResponse> = {}) {
+    super(data);
+    this.data = new ResponseMetaData(data.data);
+  }
+}
+
+class PagedResponseData extends ResponseData {
+  paging: ResponsePagingData = new ResponsePagingData();
+  items: ResponsePagingItem[] = [];
+
+  constructor(data: Partial<PagedResponseData> = {}) {
+    super(data);
+    this.paging = new ResponsePagingData(data.paging);
+    if (data.items) {
+      this.items = data.items.map(item => new ResponsePagingItem(item));
+    }
+  }
+}
+
+export class ResponsePagingData {
+  total_items: number = 0; // 950425
+  number_of_pages: number = 0; // 9505
+  current_page: number = 1; // 1
+  sort_order: string = ""; // "created_at DESC"
+  items_per_page: number = 100; // 100
+  next_page_url: string = ""; // "https://api.crunchbase.com/v3.1/organizations?page=2&sort_order=created_at%20DESC&items_per_page=100"
+  prev_page_url: string | null = ""; // NULL
+  key_set_url: string = ""; // "https://api.crunchbase.com/v3.1/organizations?prev_at=1583843891&prev_uuid=e68723c41312498f9b959f0d9..."
+  collection_url: string = ""; // "https://api.crunchbase.com/v3.1/organizations"
+  updated_since: string | null = ""; // NULL
+
+  constructor(data: Partial<ResponsePagingData> = {}) {
+    Object.assign(this, data);
+  }
+}
+
+class ResponsePagingItem {
+  type: string = "";
+  uuid: string = "";
+  properties: object = {};
+
+  constructor(data: Partial<ResponsePagingItem> = {}) {
+    Object.assign(this, data);
+  }
+}
+
+export enum SortOptionParam {
+  CreatedAsc = "created_at ASC",
+  CreatedDesc = "created_at DESC",
+  UpdatedAsc = "updated_at ASC",
+  UpdatedDesc = "updated_at DESC"
+}
+
+/**
  * Some type definitions based on their types.
  * Mostly, this allows easier copy and paste, but might also provide a hook for management.
  */
@@ -735,6 +822,14 @@ export class News {
   }
 }
 
+export enum OrganizationTypes {
+  unknown = "",
+  company = "company",
+  investor = "investor",
+  school = "school",
+  group = "group"
+}
+
 /**
  * @link https://data.crunchbase.com/docs/organization
  */
@@ -829,6 +924,51 @@ export enum OrganizationRelationships {
   news = Relationships.news // many-to-many News
 }
 
+export interface IOrganizationsCallParams {
+  updated_since?: string; // When provided, restricts the result set to Organizations where updated_at >= the passed value
+  query?: string; // Full text search of an Organization's name, aliases (i.e. previous names or "also known as"), and short description
+  name?: string; // Full text search limited to name and aliases
+  domain_name?: string; // Text search of an Organization's domain_name (e.g. www.google.com)
+  categories?: string; // Filter by categories (comma separated, AND'd together) e.g. categories=Automotive,Public Transportation
+  category_uuids?: string; // Filter by one or more Categories. Separate multiple UUIDs with commas. When passed, multiple UUIDs are logically AND'd together
+  locations?: string; // Filter by location names (comma separated, AND'd together) e.g. locations=California,San Francisco
+  organization_types?: Omit<OrganizationTypes, OrganizationTypes.unknown>[]; // Multiple organization_types are logically AND'd.
+  sort_order?: SortOptionParam;
+  page?: number; // Page number of the results to retrieve.
+}
+
+export class OrganizationsResponse extends PagedResponse {
+  data: OrganizationsPagedResponseData = new OrganizationsPagedResponseData();
+
+  constructor(data: Partial<OrganizationsResponse> = {}) {
+    super(data);
+    this.data = new OrganizationsPagedResponseData(data.data);
+  }
+}
+
+export class OrganizationsPagedResponseData extends PagedResponseData {
+  items: OrganizationResponsePagingItem[] = [];
+
+  constructor(data: Partial<OrganizationsPagedResponseData> = {}) {
+    super(data);
+    if (data.items) {
+      this.items = data.items.map(
+        item => new OrganizationResponsePagingItem(item)
+      );
+    }
+  }
+}
+
+export class OrganizationResponsePagingItem extends ResponsePagingItem {
+  properties: Organization = new Organization();
+
+  constructor(data: Partial<OrganizationResponsePagingItem> = {}) {
+    super(data);
+
+    this.properties = new Organization(data.properties);
+  }
+}
+
 /**
  * @link https://data.crunchbase.com/docs/organizationsummary
  */
@@ -838,8 +978,7 @@ export class OrganizationSummary {
   public api_path: Path = "";
   public web_path: Path = "";
   public name: String = "";
-  /** company, investor, group, or school */
-  public primary_role: String = "";
+  public primary_role: OrganizationTypes = OrganizationTypes.unknown;
   public short_description: String = "";
   public profile_image_url: UrlString = "";
   public domain: String = "";
