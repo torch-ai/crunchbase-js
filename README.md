@@ -1,20 +1,73 @@
-# Introduction 
-TODO: Give a short introduction of your project. Let this section explain the objectives or the motivation behind this project. 
+# Crunchbase services
 
-# Getting Started
-TODO: Guide users through getting your code up and running on their own system. In this section you can talk about:
-1.	Installation process
-2.	Software dependencies
-3.	Latest releases
-4.	API references
+> This package provides a standardized layer for accessing [crunchbase services](https://data.crunchbase.com/docs/using-the-api) along with data types.
 
-# Build and Test
-TODO: Describe and show how to build your code and run the tests. 
+Current version: v3.1
 
-# Contribute
-TODO: Explain how other users and developers can contribute to make your code better. 
+# Usage
 
-If you want to learn more about creating good readme files then refer the following [guidelines](https://docs.microsoft.com/en-us/azure/devops/repos/git/create-a-readme?view=azure-devops). You can also seek inspiration from the below readme files:
-- [ASP.NET Core](https://github.com/aspnet/Home)
-- [Visual Studio Code](https://github.com/Microsoft/vscode)
-- [Chakra Core](https://github.com/Microsoft/ChakraCore)
+## Installation
+
+Ensure you have access to the private artifact repositories through a `.npmrc` file.
+Install the service in your own project
+
+```
+npm install @demo/crunchbase-services
+```
+
+## Initialization
+
+At the top of your application, or in an imported configuration file:
+
+```js
+// Import the service definition and environment constants
+import CrunchbaseService, { ENVIRONMENTS } from '@demo/crunchbase-services';
+
+// Create an instance of the service
+const options = {
+    apiKey: '****'
+}
+const crunchbaseService = new CrunchbaseService(ENVIRONMENTS.development, options);
+export default crunchbaseService;
+```
+
+## Calls
+
+```js
+try {
+    const results = await apiService.searchKeywords('fire');
+} catch (error) {}
+```
+
+# Contributing
+
+## Installation
+
+Clone the package from the [repository](https://dev.azure.com/TorchResearchLLC/TORCH%20Demo%20Backlog/_git/crunchbase-service).
+
+```
+npm install
+```
+
+## Testing
+
+A local file `.env` file will need to be created with credentials for the api:
+
+```text
+API_KEY=****
+```
+
+You may run tests in a continuous watch mode:
+
+```
+npm run-script test:watch
+```
+
+## Publishing
+
+Be sure to bump the package.json version first.
+Run the publish command which will: run tests, build js files will rollup, emit typescript files, and publish to our private repositories.
+
+```
+npm publish
+```
