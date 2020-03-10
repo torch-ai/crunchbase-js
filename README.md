@@ -21,13 +21,11 @@ At the top of your application, or in an imported configuration file:
 
 ```js
 // Import the service definition and environment constants
-import CrunchbaseService, { ENVIRONMENTS } from '@demo/crunchbase-services';
+import CrunchbaseService from "@demo/crunchbase-services";
 
 // Create an instance of the service
-const options = {
-    apiKey: '****'
-}
-const crunchbaseService = new CrunchbaseService(ENVIRONMENTS.development, options);
+const options = {};
+const crunchbaseService = new CrunchbaseService(process.env.API_KEY, options);
 export default crunchbaseService;
 ```
 
@@ -35,7 +33,9 @@ export default crunchbaseService;
 
 ```js
 try {
-    const results = await apiService.searchKeywords('fire');
+  const results = await apiService.getOrganizations({
+    name: "Tesla"
+  });
 } catch (error) {}
 ```
 
