@@ -2,11 +2,12 @@ import dotenv from "dotenv";
 import CrunchbaseService from "./CrunchbaseService";
 import {
   Organization,
-  OrganizationResponsePagingItem,
-  OrganizationsPagedResponseData,
-  OrganizationsResponse,
+  OrganizationsSummaryResponsePagingItem,
+  OrganizationsSummaryPagedResponseData,
+  OrganizationsSummaryResponse,
   ResponseMetaData,
-  ResponsePagingData
+  ResponsePagingData,
+  OrganizationSummary
 } from "./CrunchbaseServiceTypes";
 
 /**
@@ -56,18 +57,18 @@ describe("crunchbaseService", () => {
       name: "Tesla"
     });
 
-    expect(response).toBeInstanceOf(OrganizationsResponse);
+    expect(response).toBeInstanceOf(OrganizationsSummaryResponse);
     expectMetaData(response.metadata);
-    expect(response.data).toBeInstanceOf(OrganizationsPagedResponseData);
+    expect(response.data).toBeInstanceOf(OrganizationsSummaryPagedResponseData);
     expectPagingData(response.data.paging);
     expect(response.data.items.length).toBeGreaterThan(0);
 
     const item = response.data.items.shift();
-    expect(item).toBeInstanceOf(OrganizationResponsePagingItem);
+    expect(item).toBeInstanceOf(OrganizationsSummaryResponsePagingItem);
     expectPagingItem(item);
-    const organization = item.properties;
-    expect(organization).toBeInstanceOf(Organization);
-    expect(organization.name).toBeTruthy();
+    const summary = item.properties;
+    expect(summary).toBeInstanceOf(OrganizationSummary);
+    expect(summary.name).toBeTruthy();
     done();
   });
 });

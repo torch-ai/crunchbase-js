@@ -924,51 +924,6 @@ export enum OrganizationRelationships {
   news = Relationships.news // many-to-many News
 }
 
-export interface IOrganizationsCallParams {
-  updated_since?: string; // When provided, restricts the result set to Organizations where updated_at >= the passed value
-  query?: string; // Full text search of an Organization's name, aliases (i.e. previous names or "also known as"), and short description
-  name?: string; // Full text search limited to name and aliases
-  domain_name?: string; // Text search of an Organization's domain_name (e.g. www.google.com)
-  categories?: string; // Filter by categories (comma separated, AND'd together) e.g. categories=Automotive,Public Transportation
-  category_uuids?: string; // Filter by one or more Categories. Separate multiple UUIDs with commas. When passed, multiple UUIDs are logically AND'd together
-  locations?: string; // Filter by location names (comma separated, AND'd together) e.g. locations=California,San Francisco
-  organization_types?: Omit<OrganizationTypes, OrganizationTypes.unknown>[]; // Multiple organization_types are logically AND'd.
-  sort_order?: SortOptionParam;
-  page?: number; // Page number of the results to retrieve.
-}
-
-export class OrganizationsResponse extends PagedResponse {
-  data: OrganizationsPagedResponseData = new OrganizationsPagedResponseData();
-
-  constructor(data: Partial<OrganizationsResponse> = {}) {
-    super(data);
-    this.data = new OrganizationsPagedResponseData(data.data);
-  }
-}
-
-export class OrganizationsPagedResponseData extends PagedResponseData {
-  items: OrganizationResponsePagingItem[] = [];
-
-  constructor(data: Partial<OrganizationsPagedResponseData> = {}) {
-    super(data);
-    if (data.items) {
-      this.items = data.items.map(
-        item => new OrganizationResponsePagingItem(item)
-      );
-    }
-  }
-}
-
-export class OrganizationResponsePagingItem extends ResponsePagingItem {
-  properties: Organization = new Organization();
-
-  constructor(data: Partial<OrganizationResponsePagingItem> = {}) {
-    super(data);
-
-    this.properties = new Organization(data.properties);
-  }
-}
-
 /**
  * @link https://data.crunchbase.com/docs/organizationsummary
  */
@@ -998,6 +953,51 @@ export class OrganizationSummary {
 
   constructor(data: Partial<OrganizationSummary> = {}) {
     Object.assign(this, data);
+  }
+}
+
+export interface IOrganizationsCallParams {
+  updated_since?: string; // When provided, restricts the result set to Organizations where updated_at >= the passed value
+  query?: string; // Full text search of an Organization's name, aliases (i.e. previous names or "also known as"), and short description
+  name?: string; // Full text search limited to name and aliases
+  domain_name?: string; // Text search of an Organization's domain_name (e.g. www.google.com)
+  categories?: string; // Filter by categories (comma separated, AND'd together) e.g. categories=Automotive,Public Transportation
+  category_uuids?: string; // Filter by one or more Categories. Separate multiple UUIDs with commas. When passed, multiple UUIDs are logically AND'd together
+  locations?: string; // Filter by location names (comma separated, AND'd together) e.g. locations=California,San Francisco
+  organization_types?: Omit<OrganizationTypes, OrganizationTypes.unknown>[]; // Multiple organization_types are logically AND'd.
+  sort_order?: SortOptionParam;
+  page?: number; // Page number of the results to retrieve.
+}
+
+export class OrganizationsSummaryResponse extends PagedResponse {
+  data: OrganizationsSummaryPagedResponseData = new OrganizationsSummaryPagedResponseData();
+
+  constructor(data: Partial<OrganizationsSummaryResponse> = {}) {
+    super(data);
+    this.data = new OrganizationsSummaryPagedResponseData(data.data);
+  }
+}
+
+export class OrganizationsSummaryPagedResponseData extends PagedResponseData {
+  items: OrganizationsSummaryResponsePagingItem[] = [];
+
+  constructor(data: Partial<OrganizationsSummaryPagedResponseData> = {}) {
+    super(data);
+    if (data.items) {
+      this.items = data.items.map(
+        item => new OrganizationsSummaryResponsePagingItem(item)
+      );
+    }
+  }
+}
+
+export class OrganizationsSummaryResponsePagingItem extends ResponsePagingItem {
+  properties: OrganizationSummary = new OrganizationSummary();
+
+  constructor(data: Partial<OrganizationsSummaryResponsePagingItem> = {}) {
+    super(data);
+
+    this.properties = new OrganizationSummary(data.properties);
   }
 }
 

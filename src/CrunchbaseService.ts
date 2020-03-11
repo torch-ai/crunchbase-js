@@ -8,7 +8,7 @@ import { TIMINGS } from "./constants";
 import {
   IOrganizationsCallParams,
   IServiceOptions,
-  OrganizationsResponse
+  OrganizationsSummaryResponse
 } from "./CrunchbaseServiceTypes";
 
 export default class CrunchbaseService {
@@ -102,12 +102,12 @@ export default class CrunchbaseService {
 
   public getOrganizations(
     options: Partial<IOrganizationsCallParams> = {}
-  ): Promise<OrganizationsResponse> {
+  ): Promise<OrganizationsSummaryResponse> {
     return this.client
       .get(CrunchbaseService.V3_URI + "organizations", {
         params: options
       })
-      .then(response => new OrganizationsResponse(response.data));
+      .then(response => new OrganizationsSummaryResponse(response.data));
   }
 
   // public async searchKeywords(query: string): Promise<KeywordsResponse> {
