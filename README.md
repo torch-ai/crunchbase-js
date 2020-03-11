@@ -33,7 +33,7 @@ export default crunchbaseService;
 
 ```js
 try {
-  const results = await apiService.getOrganizations({
+  const results = await crunchbaseService.getOrganizations({
     name: "Tesla"
   });
 } catch (error) {}
