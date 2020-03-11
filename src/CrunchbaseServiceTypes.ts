@@ -6,13 +6,13 @@ export interface IServiceOptions {
  * Non-data types
  */
 
-class Response {
+abstract class Response {
   metadata: ResponseMetaData = new ResponseMetaData();
-  data: ResponseData = new ResponseData();
 
-  constructor(data: Partial<Response> = {}) {
-    this.metadata = new ResponseMetaData(data.metadata);
-    this.data = new ResponseData(data.data);
+  protected constructor(data: Partial<Response> = {}) {
+    this.metadata = data.metadata
+      ? new ResponseMetaData(data.metadata)
+      : this.metadata;
   }
 }
 
@@ -27,31 +27,22 @@ export class ResponseMetaData {
   }
 }
 
-class ResponseData {
-  constructor(data: Partial<ResponseData> = {}) {
-    Object.assign(this, data);
-  }
-}
+abstract class PagedResponse extends Response {
+  abstract data: PagedResponseData;
 
-class PagedResponse extends Response {
-  data: ResponseData = new PagedResponseData();
-
-  constructor(data: Partial<PagedResponse> = {}) {
+  protected constructor(data: Partial<PagedResponse> = {}) {
     super(data);
-    this.data = new ResponseMetaData(data.data);
   }
 }
 
-class PagedResponseData extends ResponseData {
+abstract class PagedResponseData {
   paging: ResponsePagingData = new ResponsePagingData();
-  items: ResponsePagingItem[] = [];
+  abstract items: ResponsePagingItem[];
 
-  constructor(data: Partial<PagedResponseData> = {}) {
-    super(data);
-    this.paging = new ResponsePagingData(data.paging);
-    if (data.items) {
-      this.items = data.items.map(item => new ResponsePagingItem(item));
-    }
+  protected constructor(data: Partial<PagedResponseData> = {}) {
+    this.paging = data.paging
+      ? new ResponsePagingData(data.paging)
+      : this.paging;
   }
 }
 
@@ -72,17 +63,90 @@ export class ResponsePagingData {
   }
 }
 
-class ResponsePagingItem {
-  type: string = "";
-  uuid: string = "";
-  properties: object = {};
+abstract class ResponsePagingItem {
+  public type: string = "";
+  public uuid: string = "";
+  abstract properties: object;
 
-  constructor(data: Partial<ResponsePagingItem> = {}) {
+  protected constructor(data: Partial<ResponsePagingItem> = {}) {
     Object.assign(this, data);
   }
 }
 
+abstract class CollectionResponse extends Response {
+  abstract data: CollectionResponseData;
+
+  protected constructor(data: Partial<CollectionResponse> = {}) {
+    super(data);
+  }
+}
+
+abstract class CollectionResponseData {
+  public type: string = ""; // "Organization"
+  public uuid: string = ""; // "a367b036595254357541ad7ee8869e24"
+  abstract properties: object;
+  abstract relationships: CollectionResponseRelationships;
+
+  protected constructor(data: Partial<CollectionResponseData> = {}) {
+    Object.assign(this, data);
+  }
+}
+
+abstract class CollectionResponseRelationships {
+  // The relationships available are per collection
+  protected constructor(data: Partial<CollectionResponseRelationships> = {}) {
+    Object.assign(this, data);
+  }
+}
+
+abstract class CollectionResponseRelationshipData {
+  public cardinality: Cardinality = Cardinality.OneToOne;
+  public paging: CollectionResponseRelationshipPagingData = new CollectionResponseRelationshipPagingData(); //
+  abstract item: ResponsePagingItem;
+
+  protected constructor(
+    data: Partial<CollectionResponseRelationshipData> = {}
+  ) {
+    Object.assign(this, data);
+    this.paging = data.paging
+      ? new CollectionResponseRelationshipPagingData(data.paging)
+      : this.paging;
+  }
+}
+
+abstract class CollectionResponseRelationshipsData {
+  public cardinality: Cardinality = Cardinality.OneToMany;
+  public paging: CollectionResponseRelationshipPagingData = new CollectionResponseRelationshipPagingData(); //
+  abstract items: ResponsePagingItem[] = [];
+
+  protected constructor(
+    data: Partial<CollectionResponseRelationshipData> = {}
+  ) {
+    Object.assign(this, data);
+    this.paging = data.paging
+      ? new CollectionResponseRelationshipPagingData(data.paging)
+      : this.paging;
+  }
+}
+
+export class CollectionResponseRelationshipPagingData {
+  total_items: number = 0; // 4
+  first_page_url: string = ""; // "https://api.crunchbase.com/v3.1/organizations/tesla-motors/founders"
+  sort_order: string = SortOptionParam.NotSorted; // "not_ordered"
+
+  constructor(data: Partial<CollectionResponseRelationshipPagingData> = {}) {
+    Object.assign(this, data);
+  }
+}
+
+export enum Cardinality {
+  OneToOne = "OneToOne",
+  OneToMany = "OneToMany",
+  ManyToMany = "ManyToMany"
+}
+
 export enum SortOptionParam {
+  NotSorted = "not_ordered",
   CreatedAsc = "created_at ASC",
   CreatedDesc = "created_at DESC",
   UpdatedAsc = "updated_at ASC",
@@ -93,13 +157,14 @@ export enum SortOptionParam {
  * Some type definitions based on their types.
  * Mostly, this allows easier copy and paste, but might also provide a hook for management.
  */
+type String = string;
 type BooleanOrNull = Boolean | null;
 /** A URL is a fully-qualified (http or https) website reference. */
 type UrlString = string;
 /** A Path in the Crunchbase REST API is a relative path to the detail for an Item. */
 type Path = string;
-type FloatOrNull = number;
-type Integer = number;
+type FloatOrNull = number | null;
+type IntegerOrNull = number | null;
 /** A Timestamp in the Crunchbase API is Unix Time, or seconds since the epoch. */
 type Timestamp = string;
 type UUID = string;
@@ -144,6 +209,11 @@ export enum AcquisitionDispositions {
   Division = "Division", // The acquired Organization becomes a Division of the acquirer
   Subsidiary = "Subsidiary", // The acquired Organization becomes a Subsidiary of the acquirer
   Combined = "Combined" // The acquired Organization is combined / merged with the acquirer
+}
+
+export enum CollectionTypes {
+  Organization = "Organization",
+  Person = "Person"
 }
 
 /**
@@ -467,10 +537,41 @@ export class Address {
   public longitude: FloatOrNull = null;
   public created_at: Timestamp = "";
   public updated_at: Timestamp = "";
-  public postal_code: Integer = 0; // TODO I have personal reservations about this...
+  public postal_code: String = null;
 
   constructor(data: Partial<Address> = {}) {
     Object.assign(this, data);
+  }
+}
+
+export class CollectionResponseAddressRelationshipData extends CollectionResponseRelationshipData {
+  public item: AddressPagingItem = new AddressPagingItem();
+
+  constructor(data: Partial<CollectionResponseAddressRelationshipData> = {}) {
+    super(data);
+    this.item = data.item ? new AddressPagingItem(data.item) : this.item;
+  }
+}
+
+export class CollectionResponseAddressRelationshipsData extends CollectionResponseRelationshipsData {
+  public items: AddressPagingItem[] = [];
+
+  constructor(data: Partial<CollectionResponseAddressRelationshipsData> = {}) {
+    super(data);
+    if (data.items) {
+      this.items = data.items.map(item => new AddressPagingItem(item));
+    }
+  }
+}
+
+export class AddressPagingItem extends ResponsePagingItem {
+  public properties: Address = new Address();
+
+  constructor(data: Partial<AddressPagingItem> = {}) {
+    super(data);
+    this.properties = data.properties
+      ? new Address(data.properties)
+      : this.properties;
   }
 }
 
@@ -480,10 +581,10 @@ export class Address {
 export class Acquisition {
   public api_path: Path = "";
   public web_path: Path = "";
-  public price: Integer = 0;
+  public price: IntegerOrNull = null;
   public price_currency_code: CurrencyCodes = CurrencyCodes.unknown;
   /** Currency conversion is based on the announced_on date. */
-  public price_usd: Integer = 0;
+  public price_usd: IntegerOrNull = null;
   public payment_type: AcquisitionPaymentTypes =
     AcquisitionPaymentTypes.unknown;
   public acquisition_type: AcquisitionTypes = AcquisitionTypes.unknown;
@@ -497,7 +598,7 @@ export class Acquisition {
   public created_at: Timestamp = "";
   public updated_at: Timestamp = "";
   public api_url: URL;
-  public rank: Integer;
+  public rank: IntegerOrNull;
 
   constructor(data: Partial<Acquisition> = {}) {
     Object.assign(this, data);
@@ -509,6 +610,43 @@ export enum AcquisitionRelationships {
   acquiree = Relationships.acquiree,
   images = Relationships.images,
   news = Relationships.news
+}
+
+export class CollectionResponseAcquisitionRelationshipData extends CollectionResponseRelationshipData {
+  public item: AcquisitionPagingItem = new AcquisitionPagingItem();
+
+  constructor(
+    data: Partial<CollectionResponseAcquisitionRelationshipData> = {}
+  ) {
+    super(data);
+    this.item = data.item ? new AcquisitionPagingItem(data.item) : this.item;
+  }
+}
+
+export class CollectionResponseAcquisitionRelationshipsData extends CollectionResponseRelationshipsData {
+  public items: AcquisitionPagingItem[] = [];
+
+  constructor(
+    data: Partial<CollectionResponseAcquisitionRelationshipsData> = {}
+  ) {
+    super(data);
+    if (data.items) {
+      this.items = data.items.map(item => new AcquisitionPagingItem(item));
+    }
+  }
+}
+
+export class AcquisitionPagingItem extends ResponsePagingItem {
+  public properties: Acquisition = new Acquisition();
+  public relationships: object[] = []; // TODO acquiree(organization)
+
+  constructor(data: Partial<AcquisitionPagingItem> = {}) {
+    super(data);
+    this.properties = data.properties
+      ? new Acquisition(data.properties)
+      : this.properties;
+    // console.warn("AcquisitionPagingItem.relationships TODO");
+  }
 }
 
 /**
@@ -538,6 +676,28 @@ export class Category {
 
   constructor(data: Partial<Category> = {}) {
     Object.assign(this, data);
+  }
+}
+
+export class CollectionResponseCategoryRelationshipsData extends CollectionResponseRelationshipsData {
+  public items: CategoryPagingItem[] = [];
+
+  constructor(data: Partial<CollectionResponseCategoryRelationshipsData> = {}) {
+    super(data);
+    if (data.items) {
+      this.items = data.items.map(item => new CategoryPagingItem(item));
+    }
+  }
+}
+
+export class CategoryPagingItem extends ResponsePagingItem {
+  public properties: Category = new Category();
+
+  constructor(data: Partial<CategoryPagingItem> = {}) {
+    super(data);
+    this.properties = data.properties
+      ? new Category(data.properties)
+      : this.properties;
   }
 }
 
@@ -577,10 +737,10 @@ export class Fund {
   public name: String = "";
   public announced_on: TrustedDate = "";
   public announced_on_trust_code: TrustCode = TrustCode.NullOrInvalidDate;
-  public money_raised: Integer = 0;
+  public money_raised: IntegerOrNull = null;
   public money_raised_currency_code: CurrencyCodes = CurrencyCodes.unknown;
   /** currency conversion, if necessary, is done based on the announced_on date */
-  public money_raised_usd: Integer = 0;
+  public money_raised_usd: IntegerOrNull = null;
   public created_at: Timestamp = "";
   public updated_at: Timestamp = "";
   public permalink: String = "";
@@ -600,6 +760,30 @@ export enum FundRelationships {
   websites = Relationships.websites
 }
 
+export class CollectionResponseFundRelationshipsData extends CollectionResponseRelationshipsData {
+  public items: FundPagingItem[] = [];
+
+  constructor(data: Partial<CollectionResponseFundRelationshipsData> = {}) {
+    super(data);
+    if (data.items) {
+      this.items = data.items.map(item => new FundPagingItem(item));
+    }
+  }
+}
+
+export class FundPagingItem extends ResponsePagingItem {
+  public properties: Fund = new Fund();
+  public relationships: object[] = []; // TODO venture_firm, investor, images, videos, news, websites paging item, maybe also an organization paging item?
+
+  constructor(data: Partial<FundPagingItem> = {}) {
+    super(data);
+    this.properties = data.properties
+      ? new Fund(data.properties)
+      : this.properties;
+    // console.warn("FundsPagingItem.relationships TODO");
+  }
+}
+
 /**
  * @link https://data.crunchbase.com/docs/funding-round
  */
@@ -615,24 +799,24 @@ export class FundingRound {
   public announced_on_trust_code: TrustCode = TrustCode.NullOrInvalidDate;
   public closed_on: TrustedDate = "";
   public closed_on_trust_code: TrustCode = TrustCode.NullOrInvalidDate;
-  public money_raised: Integer = 0;
+  public money_raised: IntegerOrNull = null;
   public money_raised_currency_code: CurrencyCodes = CurrencyCodes.unknown;
   /** currency conversion, if necessary, is done based on the announced_on date. */
-  public money_raised_usd: Integer = 0;
+  public money_raised_usd: IntegerOrNull = null;
   /** When available, the target of the FundingRound */
-  public target_money_raised: Integer = 0;
+  public target_money_raised: IntegerOrNull = null;
   public target_money_raised_currency_code: CurrencyCodes =
     CurrencyCodes.unknown;
   /** currency conversion, if necessary, is done based on the announced_on date. */
-  public target_money_raised_usd: Integer = 0;
+  public target_money_raised_usd: IntegerOrNull = null;
   public created_at: Timestamp = "";
   public updated_at: Timestamp = "";
   public permalink: String = "";
   public api_url: UrlString = "";
-  public pre_money_valuation: Integer = 0;
-  public pre_money_valuation_currency_code: Integer = 0;
-  public pre_money_valuation_usd: Integer = 0;
-  public rank: Integer = 0;
+  public pre_money_valuation: IntegerOrNull = null;
+  public pre_money_valuation_currency_code: IntegerOrNull = null;
+  public pre_money_valuation_usd: IntegerOrNull = null;
+  public rank: IntegerOrNull = null;
 
   constructor(data: Partial<FundingRound> = {}) {
     Object.assign(this, data);
@@ -649,6 +833,32 @@ export enum FundingRoundRelationships {
   websites = Relationships.websites
 }
 
+export class CollectionResponseFundingRoundRelationshipsData extends CollectionResponseRelationshipsData {
+  public items: FundingRoundPagingItem[] = [];
+
+  constructor(
+    data: Partial<CollectionResponseFundingRoundRelationshipsData> = {}
+  ) {
+    super(data);
+    if (data.items) {
+      this.items = data.items.map(item => new FundingRoundPagingItem(item));
+    }
+  }
+}
+
+export class FundingRoundPagingItem extends ResponsePagingItem {
+  public properties: FundingRound = new FundingRound();
+  public relationships: object[] = []; // TODO Investment paging item, maybe also an organization paging item?
+
+  constructor(data: Partial<FundingRoundPagingItem> = {}) {
+    super(data);
+    this.properties = data.properties
+      ? new FundingRound(data.properties)
+      : this.properties;
+    // console.warn("FundingRoundPagingItem.relationships TODO");
+  }
+}
+
 /**
  * @link https://data.crunchbase.com/docs/image-asset
  */
@@ -659,15 +869,49 @@ export class Image {
   /** append to image_path_prefix */
   public asset_path: Path = "";
   public content_type: String = "";
-  public height: Integer = 0;
-  public width: Integer = 0;
+  public height: IntegerOrNull = null;
+  public width: IntegerOrNull = null;
   /** file size in bytes */
-  public filesize: Integer = 0;
+  public filesize: IntegerOrNull = null;
   public created_at: Timestamp = "";
   public updated_at: Timestamp = "";
 
   constructor(data: Partial<Image> = {}) {
     Object.assign(this, data);
+  }
+}
+
+export class CollectionResponseImageRelationshipData extends CollectionResponseRelationshipData {
+  public item: ImagePagingItem = new ImagePagingItem();
+
+  constructor(data: Partial<CollectionResponseImageRelationshipData> = {}) {
+    super(data);
+    this.item = data.item ? new ImagePagingItem(data.item) : this.item;
+  }
+}
+
+export class CollectionResponseImageRelationshipsData extends CollectionResponseRelationshipsData {
+  public items: ImagePagingItem[] = [];
+
+  constructor(data: Partial<CollectionResponseImageRelationshipsData> = {}) {
+    super(data);
+    if (data.items) {
+      this.items = data.items.map(item => new ImagePagingItem(item));
+    }
+  }
+}
+
+export class ImagePagingItem extends ResponsePagingItem {
+  public properties: Image = new Image();
+
+  constructor(data: Partial<ImagePagingItem> = {}) {
+    super(data);
+    if (data.properties) {
+      this.properties = new Image(data.properties);
+      // Append the type and uuid properties to the properties for class data point consitency
+      this.properties.type = data.type;
+      this.properties.uuid = data.uuid;
+    }
   }
 }
 
@@ -678,9 +922,9 @@ export class Investment {
   /** "Investment" */
   public type: String = "";
   public uuid: UUID = "";
-  public money_invested: Integer = 0;
+  public money_invested: IntegerOrNull = null;
   public money_invested_currency_code: CurrencyCodes = CurrencyCodes.unknown;
-  public money_invested_usd: Integer = 0;
+  public money_invested_usd: IntegerOrNull = null;
   public is_lead_investor: BooleanOrNull = null;
   public announced_on: String = "";
   public announced_on_trust_code: TrustCode = TrustCode.NullOrInvalidDate;
@@ -696,6 +940,35 @@ export enum InvestmentRelationships {
   funding_round = Relationships.funding_round, // many-to-one FundingRound
   invested_in = Relationships.invested_in, // many-to-one Organization or Person
   investors = Relationships.investors // one-to-many Organization or Person
+}
+
+export class CollectionResponseInvestmentRelationshipsData extends CollectionResponseRelationshipsData {
+  public items: InvestmentPagingItem[] = [];
+
+  constructor(
+    data: Partial<CollectionResponseInvestmentRelationshipsData> = {}
+  ) {
+    super(data);
+    if (data.items) {
+      this.items = data.items.map(item => new InvestmentPagingItem(item));
+    }
+  }
+}
+
+export class InvestmentPagingItem extends ResponsePagingItem {
+  public properties: Investment = new Investment();
+  public relationships: object[] = []; // TODO Investment funding round, partners, invested_in,  item, maybe also an organization paging item?
+
+  constructor(data: Partial<InvestmentPagingItem> = {}) {
+    super(data);
+    if (data.properties) {
+      this.properties = new Investment(data.properties);
+      // Append the type and uuid properties to the properties for class data point consitency
+      this.properties.type = data.type;
+      this.properties.uuid = data.uuid;
+    }
+    // console.warn("InvestmentPagingItem.relationships TODO");
+  }
 }
 
 /**
@@ -721,15 +994,15 @@ export class Ipo {
     CurrencyCodes.unknown;
   /** currency conversion, when necessary, is done based on the went_public_on date */
   public opening_share_price_usd: FloatOrNull = null;
-  public opening_valuation: Integer = 0;
+  public opening_valuation: IntegerOrNull = null;
   public opening_valuation_currency_code: CurrencyCodes = CurrencyCodes.unknown;
   /** currency conversion, when necessary, is done based on the went_public_on date */
-  public opening_valuation_usd: Integer = 0;
+  public opening_valuation_usd: IntegerOrNull = null;
   /** Money raised by virtue of the Ipo */
-  public money_raised: Integer = 0;
+  public money_raised: IntegerOrNull = null;
   public money_raised_currency_code: CurrencyCodes = CurrencyCodes.unknown;
   /** currency conversion, when necessary, is done based on the went_public_on date */
-  public money_raised_usd: Integer = 0;
+  public money_raised_usd: IntegerOrNull = null;
   public created_at: Timestamp = "";
   public updated_at: Timestamp = "";
   /** This field contains the full url of the api endpoint */
@@ -748,6 +1021,26 @@ export enum IpoRelationships {
   videos = Relationships.videos,
   news = Relationships.news,
   websites = Relationships.websites
+}
+
+export class CollectionResponseIpoRelationshipData extends CollectionResponseRelationshipData {
+  public item: IpoPagingItem = new IpoPagingItem();
+
+  constructor(data: Partial<CollectionResponseIpoRelationshipData> = {}) {
+    super(data);
+    this.item = data.item ? new IpoPagingItem(data.item) : this.item;
+  }
+}
+
+export class IpoPagingItem extends ResponsePagingItem {
+  public properties: Ipo = new Ipo();
+
+  constructor(data: Partial<IpoPagingItem> = {}) {
+    super(data);
+    this.properties = data.properties
+      ? new Ipo(data.properties)
+      : this.properties;
+  }
 }
 
 /**
@@ -777,6 +1070,33 @@ export enum JobRelationships {
   organization = Relationships.organization
 }
 
+export class CollectionResponseJobRelationshipsData extends CollectionResponseRelationshipsData {
+  public items: JobPagingItem[] = [];
+
+  constructor(data: Partial<CollectionResponseJobRelationshipsData> = {}) {
+    super(data);
+    if (data.items) {
+      this.items = data.items.map(item => new JobPagingItem(item));
+    }
+  }
+}
+
+export class JobPagingItem extends ResponsePagingItem {
+  public properties: Job = new Job();
+  public relationships: object[] = []; // TODO Person paging item, maybe also an organization paging item?
+
+  constructor(data: Partial<JobPagingItem> = {}) {
+    super(data);
+    if (data.properties) {
+      this.properties = new Job(data.properties);
+      // Append the type and uuid properties to the properties for class data point consitency
+      this.properties.type = data.type;
+      this.properties.uuid = data.uuid;
+    }
+    // console.warn("JobPagingItem.relationships TODO");
+  }
+}
+
 /**
  * @link https://data.crunchbase.com/docs/location
  */
@@ -791,10 +1111,10 @@ export class Location {
   public updated_at: Timestamp = "";
   public city: String = "";
   public region: String = "";
-  public region_code2: Integer = 0;
+  public region_code2: IntegerOrNull = null;
   public country: String = "";
-  public country_code2: Integer = 0;
-  public country_code3: Integer = 0;
+  public country_code2: IntegerOrNull = null;
+  public country_code3: IntegerOrNull = null;
 
   constructor(data: Partial<Location> = {}) {
     Object.assign(this, data);
@@ -828,6 +1148,28 @@ export enum OrganizationTypes {
   investor = "investor",
   school = "school",
   group = "group"
+}
+
+export class CollectionResponseNewsRelationshipsData extends CollectionResponseRelationshipsData {
+  public items: NewsPagingItem[] = [];
+
+  constructor(data: Partial<CollectionResponseNewsRelationshipsData> = {}) {
+    super(data);
+    if (data.items) {
+      this.items = data.items.map(item => new NewsPagingItem(item));
+    }
+  }
+}
+
+export class NewsPagingItem extends ResponsePagingItem {
+  public properties: News = new News();
+
+  constructor(data: Partial<NewsPagingItem> = {}) {
+    super(data);
+    this.properties = data.properties
+      ? new News(data.properties)
+      : this.properties;
+  }
 }
 
 /**
@@ -864,14 +1206,14 @@ export class Organization {
   /** YYYY-MM-DD */
   public closed_on: TrustedDate = "";
   public closed_on_trust_code: TrustCode = TrustCode.NullOrInvalidDate;
-  public num_employees_min: Integer = 0;
-  public num_employees_max: Integer = 0;
-  public total_funding_usd: Integer = 0;
+  public num_employees_min: IntegerOrNull = null;
+  public num_employees_max: IntegerOrNull = null;
+  public total_funding_usd: IntegerOrNull = null;
   /** See Stock Exchanges */
   public stock_exchange: String = "";
   /** The symbol under which the Organization trades on the stock_exchange */
   public stock_symbol: String = "";
-  public number_of_investments: Integer = 0;
+  public number_of_investments: IntegerOrNull = null;
   /** Fully-qualified URL */
   public homepage_url: UrlString = "";
   public created_at: Timestamp = "";
@@ -881,7 +1223,7 @@ export class Organization {
   public investor_type: String = "";
   public contact_email: String = "";
   public phone_number: String = "";
-  public rank: Integer = 0;
+  public rank: IntegerOrNull = null;
 
   constructor(data: Partial<Organization> = {}) {
     Object.assign(this, data);
@@ -922,6 +1264,165 @@ export enum OrganizationRelationships {
   /** @deprecated */
   videos = Relationships.videos, // one-to-many Note: This data has been deprecated so this will return an empty array
   news = Relationships.news // many-to-many News
+}
+
+export class CollectionResponseOrganizationRelationshipsData extends CollectionResponseRelationshipsData {
+  public items: OrganizationPagingItem[] = [];
+
+  constructor(
+    data: Partial<CollectionResponseOrganizationRelationshipsData> = {}
+  ) {
+    super(data);
+    if (data.items) {
+      this.items = data.items.map(item => new OrganizationPagingItem(item));
+    }
+  }
+}
+
+export class OrganizationPagingItem extends ResponsePagingItem {
+  public properties: Organization = new Organization();
+  public relationships: object[] = []; // TODO Person paging item, maybe also an organization paging item?
+
+  constructor(data: Partial<OrganizationPagingItem> = {}) {
+    super(data);
+    this.properties = data.properties
+      ? new Organization(data.properties)
+      : this.properties;
+    // console.warn("OrganizationPagingItem.relationships TODO");
+  }
+}
+
+export class OrganizationResponse extends CollectionResponse {
+  data: OrganizationResponseData = new OrganizationResponseData();
+
+  constructor(data: Partial<OrganizationResponse> = {}) {
+    super(data);
+    this.data = data.data ? new OrganizationResponseData(data.data) : this.data;
+  }
+}
+
+export class OrganizationResponseData extends CollectionResponseData {
+  public properties: Organization = new Organization();
+  public relationships: OrganizationResponseRelationships = new OrganizationResponseRelationships();
+
+  constructor(data: Partial<OrganizationResponseData> = {}) {
+    super(data);
+    this.properties = data.properties
+      ? new Organization(data.properties)
+      : this.properties;
+    this.relationships = data.relationships
+      ? new OrganizationResponseRelationships(data.relationships)
+      : this.relationships;
+  }
+}
+
+export class OrganizationResponseRelationships extends CollectionResponseRelationships {
+  public primary_image: CollectionResponseImageRelationshipData = new CollectionResponseImageRelationshipData();
+  public founders: CollectionResponsePersonRelationshipsData = new CollectionResponsePersonRelationshipsData();
+  public featured_team: CollectionResponseJobRelationshipsData = new CollectionResponseJobRelationshipsData();
+  public current_team: CollectionResponseJobRelationshipsData = new CollectionResponseJobRelationshipsData();
+  public past_team: CollectionResponseJobRelationshipsData = new CollectionResponseJobRelationshipsData();
+  public board_members_and_advisors: CollectionResponseJobRelationshipsData = new CollectionResponseJobRelationshipsData();
+  public investors: CollectionResponseOrganizationOrPersonRelationshipsData = new CollectionResponseOrganizationOrPersonRelationshipsData();
+  public owned_by: CollectionResponseOrganizationRelationshipsData = new CollectionResponseOrganizationRelationshipsData();
+  public sub_organizations: CollectionResponseOrganizationRelationshipsData = new CollectionResponseOrganizationRelationshipsData();
+  public headquarters: CollectionResponseAddressRelationshipData = new CollectionResponseAddressRelationshipData();
+  public offices: CollectionResponseAddressRelationshipsData = new CollectionResponseAddressRelationshipsData();
+  /** @deprecated Note: This node has been deprecated so this will return an empty array */
+  public products: object = {};
+  public categories: CollectionResponseCategoryRelationshipsData = new CollectionResponseCategoryRelationshipsData();
+  /** @deprecated Note: This node has been deprecated so this will return an empty array */
+  public competitors: object = {};
+  /** @deprecated Note: This node has been deprecated so this will return an empty array */
+  public customers: object = {};
+  /** @deprecated Note: This node has been deprecated so this will return an empty array */
+  public memberships: object = {};
+  /** @deprecated Note: This node has been deprecated so this will return an empty array */
+  public members: object = {};
+  public funding_rounds: CollectionResponseFundingRoundRelationshipsData = new CollectionResponseFundingRoundRelationshipsData();
+  public investments: CollectionResponseInvestmentRelationshipsData = new CollectionResponseInvestmentRelationshipsData();
+  public acquisitions: CollectionResponseAcquisitionRelationshipsData = new CollectionResponseAcquisitionRelationshipsData();
+  public acquired_by: CollectionResponseAcquisitionRelationshipData = new CollectionResponseAcquisitionRelationshipData();
+  public ipo: CollectionResponseIpoRelationshipData = new CollectionResponseIpoRelationshipData();
+  public funds: CollectionResponseFundRelationshipsData = new CollectionResponseFundRelationshipsData();
+  public websites: CollectionResponseWebsiteRelationshipsData = new CollectionResponseWebsiteRelationshipsData();
+  public images: CollectionResponseImageRelationshipsData = new CollectionResponseImageRelationshipsData();
+  /** @deprecated Note: This node has been deprecated so this will return an empty array */
+  public videos: object = {};
+  public news: CollectionResponseNewsRelationshipsData = new CollectionResponseNewsRelationshipsData();
+
+  constructor(data: Partial<OrganizationResponseRelationships> = {}) {
+    super(data);
+    this.primary_image = data.primary_image
+      ? new CollectionResponseImageRelationshipData(data.primary_image)
+      : this.primary_image;
+    this.founders = data.founders
+      ? new CollectionResponsePersonRelationshipsData(data.founders)
+      : this.founders;
+    this.featured_team = data.featured_team
+      ? new CollectionResponseJobRelationshipsData(data.featured_team)
+      : this.featured_team;
+    this.current_team = data.current_team
+      ? new CollectionResponseJobRelationshipsData(data.current_team)
+      : this.current_team;
+    this.past_team = data.past_team
+      ? new CollectionResponseJobRelationshipsData(data.past_team)
+      : this.past_team;
+    this.board_members_and_advisors = data.board_members_and_advisors
+      ? new CollectionResponseJobRelationshipsData(
+          data.board_members_and_advisors
+        )
+      : this.board_members_and_advisors;
+    this.investors = data.investors
+      ? new CollectionResponseOrganizationOrPersonRelationshipsData(
+          data.investors
+        )
+      : this.investors;
+    this.owned_by = data.owned_by
+      ? new CollectionResponseOrganizationRelationshipsData(data.owned_by)
+      : this.owned_by;
+    this.sub_organizations = data.sub_organizations
+      ? new CollectionResponseOrganizationRelationshipsData(
+          data.sub_organizations
+        )
+      : this.sub_organizations;
+    this.headquarters = data.headquarters
+      ? new CollectionResponseAddressRelationshipData(data.headquarters)
+      : this.headquarters;
+    this.offices = data.offices
+      ? new CollectionResponseAddressRelationshipsData(data.offices)
+      : this.offices;
+    this.categories = data.categories
+      ? new CollectionResponseCategoryRelationshipsData(data.categories)
+      : this.categories;
+    this.funding_rounds = data.funding_rounds
+      ? new CollectionResponseFundingRoundRelationshipsData(data.funding_rounds)
+      : this.funding_rounds;
+    this.investments = data.investments
+      ? new CollectionResponseInvestmentRelationshipsData(data.investments)
+      : this.investments;
+    this.acquisitions = data.acquisitions
+      ? new CollectionResponseAcquisitionRelationshipsData(data.acquisitions)
+      : this.acquisitions;
+    this.acquired_by = data.acquired_by
+      ? new CollectionResponseAcquisitionRelationshipData(data.acquired_by)
+      : this.acquired_by;
+    this.ipo = data.ipo
+      ? new CollectionResponseIpoRelationshipData(data.ipo)
+      : this.ipo;
+    this.funds = data.funds
+      ? new CollectionResponseFundRelationshipsData(data.funds)
+      : this.funds;
+    this.websites = data.websites
+      ? new CollectionResponseWebsiteRelationshipsData(data.websites)
+      : this.websites;
+    this.images = data.images
+      ? new CollectionResponseImageRelationshipsData(data.images)
+      : this.images;
+    this.news = data.news
+      ? new CollectionResponseNewsRelationshipsData(data.news)
+      : this.news;
+  }
 }
 
 /**
@@ -979,22 +1480,22 @@ export class OrganizationsSummaryResponse extends PagedResponse {
 }
 
 export class OrganizationsSummaryPagedResponseData extends PagedResponseData {
-  items: OrganizationsSummaryResponsePagingItem[] = [];
+  items: OrganizationsSummaryPagingItem[] = [];
 
   constructor(data: Partial<OrganizationsSummaryPagedResponseData> = {}) {
     super(data);
     if (data.items) {
       this.items = data.items.map(
-        item => new OrganizationsSummaryResponsePagingItem(item)
+        item => new OrganizationsSummaryPagingItem(item)
       );
     }
   }
 }
 
-export class OrganizationsSummaryResponsePagingItem extends ResponsePagingItem {
+export class OrganizationsSummaryPagingItem extends ResponsePagingItem {
   properties: OrganizationSummary = new OrganizationSummary();
 
-  constructor(data: Partial<OrganizationsSummaryResponsePagingItem> = {}) {
+  constructor(data: Partial<OrganizationsSummaryPagingItem> = {}) {
     super(data);
 
     this.properties = new OrganizationSummary(data.properties);
@@ -1031,7 +1532,7 @@ export class Person {
   public permalink_aliases: String = "";
   public api_url: UrlString = "";
   public gender: String = "";
-  public rank: Integer = 0;
+  public rank: IntegerOrNull = null;
 
   constructor(data: Partial<Person> = {}) {
     Object.assign(this, data);
@@ -1054,6 +1555,28 @@ export enum PersonRelationships {
   /** @deprecated */
   videos = Relationships.videos, // one-to-many Note: This relationship has been deprecated and will return null results
   news = Relationships.news // many-to-many News
+}
+
+export class CollectionResponsePersonRelationshipsData extends CollectionResponseRelationshipsData {
+  public items: PersonPagingItem[] = [];
+
+  constructor(data: Partial<CollectionResponsePersonRelationshipsData> = {}) {
+    super(data);
+    if (data.items) {
+      this.items = data.items.map(item => new PersonPagingItem(item));
+    }
+  }
+}
+
+export class PersonPagingItem extends ResponsePagingItem {
+  public properties: Person = new Person();
+
+  constructor(data: Partial<PersonPagingItem> = {}) {
+    super(data);
+    this.properties = data.properties
+      ? new Person(data.properties)
+      : this.properties;
+  }
 }
 
 /**
@@ -1102,5 +1625,66 @@ export class Website {
 
   constructor(data: Partial<Website> = {}) {
     Object.assign(this, data);
+  }
+}
+
+export class CollectionResponseWebsiteRelationshipsData extends CollectionResponseRelationshipsData {
+  public items: WebsitePagingItem[] = [];
+
+  constructor(data: Partial<CollectionResponseWebsiteRelationshipsData> = {}) {
+    super(data);
+    if (data.items) {
+      this.items = data.items.map(item => new WebsitePagingItem(item));
+    }
+  }
+}
+
+export class WebsitePagingItem extends ResponsePagingItem {
+  public properties: Website = new Website();
+
+  constructor(data: Partial<WebsitePagingItem> = {}) {
+    super(data);
+    this.properties = data.properties
+      ? new Website(data.properties)
+      : this.properties;
+  }
+}
+
+/**
+ * Weird things that don't really match any given collection
+ */
+
+export class CollectionResponseOrganizationOrPersonRelationshipsData extends CollectionResponseRelationshipsData {
+  public items: (OrganizationPagingItem | PersonPagingItem)[] = [];
+
+  constructor(
+    data: Partial<CollectionResponseOrganizationOrPersonRelationshipsData> = {}
+  ) {
+    super(data);
+    if (data.items) {
+      this.items = data.items.map(item => {
+        if (item.type === CollectionTypes.Organization) {
+          // @ts-ignore - Oh mixed typings... /sigh
+          return new OrganizationPagingItem(item);
+        }
+        if (item.type === CollectionTypes.Person) {
+          // @ts-ignore - Oh mixed typings... /sigh
+          return new PersonPagingItem(item);
+        }
+        throw new Error(`Unhandled collection relationship type: ${item.type}`);
+      });
+    }
+  }
+
+  public getOrganizations(): OrganizationPagingItem[] {
+    // @ts-ignore - Oh mixed typings... /sigh
+    return this.items.filter(
+      item => item.type === CollectionTypes.Organization
+    );
+  }
+
+  public getPeople(): PersonPagingItem[] {
+    // @ts-ignore - Oh mixed typings... /sigh
+    return this.items.filter(item => item.type === CollectionTypes.Person);
   }
 }

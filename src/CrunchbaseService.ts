@@ -8,12 +8,15 @@ import { TIMINGS } from "./constants";
 import {
   IOrganizationsCallParams,
   IServiceOptions,
+  OrganizationResponse,
   OrganizationsSummaryResponse
 } from "./CrunchbaseServiceTypes";
 
 export default class CrunchbaseService {
   protected static SERVER_URI = "https://api.crunchbase.com/";
   protected static V3_URI = "v3.1/";
+  protected static ENDPOINT_ORGANIZATIONS =
+    CrunchbaseService.V3_URI + "organizations";
 
   protected static DEFAULT_TIMEOUT = TIMINGS.defaultTimeout;
 
@@ -95,6 +98,7 @@ export default class CrunchbaseService {
     originalRequest: AxiosRequestConfig
   ): Promise<AxiosRequestConfig> {
     return new Promise(async (resolve, reject) => {
+      originalRequest.params = originalRequest.params || {};
       originalRequest.params.user_key = this.apiKey;
       resolve(originalRequest);
     });
@@ -104,17 +108,26 @@ export default class CrunchbaseService {
     options: Partial<IOrganizationsCallParams> = {}
   ): Promise<OrganizationsSummaryResponse> {
     return this.client
-      .get(CrunchbaseService.V3_URI + "organizations", {
-        params: options
+      .get(CrunchbaseService.ENDPOINT_ORGANIZATIONS, {
+        params: options,
+        timeout: TIMINGS.organizationsTimeout
       })
       .then(response => new OrganizationsSummaryResponse(response.data));
   }
 
-  // public async searchKeywords(query: string): Promise<KeywordsResponse> {
-  //     return this.client.get(CrunchbaseService.ENDPOINT_KEYWORD_SEARCH + '/' + query, {
-  //         timeout: 0, // Unlimited time out. This can be a rather long call.
-  //     })
-  //         .then(results => results.data)
-  //         .then(data => new KeywordsResponse(data));
+  public getOrganization(permalink: string): Promise<OrganizationResponse> {
+    return this.client
+      .get([CrunchbaseService.ENDPOINT_ORGANIZATIONS, permalink].join("/"), {
+        timeout: TIMINGS.organizationTimeout
+      })
+      .then(response => new OrganizationResponse(response.data));
+  }
+
+  // TODO The api gives us urls like "first_page_url": "https://api.crunchbase.com/v3.1/organizations/tesla-motors/competitors". We have to figure out how to follow and type those.
+  // public get(url: string): Promise<any> {
+  //   return this.client.get(url).then(response => response.data);
   // }
+
+  // TODO we likely could get benefit from using performance of this
+  // public batch(): Promise<object[]> {}
 }

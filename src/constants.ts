@@ -1,3 +1,5 @@
 export const TIMINGS = {
-    defaultTimeout: 2000,
+  defaultTimeout: 5000,
+  organizationsTimeout: 10000,
+  organizationTimeout: 20000
 };
