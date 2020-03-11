@@ -142,6 +142,7 @@ export class CollectionResponseRelationshipPagingData {
 export enum Cardinality {
   OneToOne = "OneToOne",
   OneToMany = "OneToMany",
+  ManyToOne = "ManyToOne", // .... Why?
   ManyToMany = "ManyToMany"
 }
 
@@ -166,7 +167,7 @@ type Path = string;
 type FloatOrNull = number | null;
 type IntegerOrNull = number | null;
 /** A Timestamp in the Crunchbase API is Unix Time, or seconds since the epoch. */
-type Timestamp = string;
+type Timestamp = number | null;
 type UUID = string;
 
 /**
@@ -535,8 +536,8 @@ export class Address {
   public country_web_path: Path = "";
   public latitude: FloatOrNull = null;
   public longitude: FloatOrNull = null;
-  public created_at: Timestamp = "";
-  public updated_at: Timestamp = "";
+  public created_at: Timestamp = null;
+  public updated_at: Timestamp = null;
   public postal_code: String = null;
 
   constructor(data: Partial<Address> = {}) {
@@ -595,8 +596,8 @@ export class Acquisition {
   public announced_on_trust_code: TrustCode = TrustCode.NullOrInvalidDate;
   public completed_on: TrustedDate = "";
   public completed_on_trust_code: TrustCode = TrustCode.NullOrInvalidDate;
-  public created_at: Timestamp = "";
-  public updated_at: Timestamp = "";
+  public created_at: Timestamp = null;
+  public updated_at: Timestamp = null;
   public api_url: URL;
   public rank: IntegerOrNull;
 
@@ -666,9 +667,9 @@ export class Category {
    */
   public products_in_category: null = null;
   /** When the Category was added to Crunchbase */
-  public created_at: Timestamp = "";
+  public created_at: Timestamp = null;
   /** When the Category was last updated */
-  public updated_at: Timestamp = "";
+  public updated_at: Timestamp = null;
   /**
    * @deprecated This field has been deprecated in this version, so it will always return "null".
    */
@@ -713,10 +714,10 @@ export class Degree {
   public completed_on: TrustedDate = "";
   public completed_on_trust_code: TrustCode = TrustCode.NullOrInvalidDate;
   /** e.g., "BA", "PhD" */
-  public degree_type_name: String = "";
+  public degree_type_name: String = "unknown";
   public degree_subject: String = "";
-  public created_at: Timestamp = "";
-  public updated_at: Timestamp = "";
+  public created_at: Timestamp = null;
+  public updated_at: Timestamp = null;
 
   constructor(data: Partial<Degree> = {}) {
     Object.assign(this, data);
@@ -726,6 +727,30 @@ export class Degree {
 export enum DegreeRelationships {
   school = Relationships.school,
   person = Relationships.person
+}
+
+export class CollectionResponseDegreeRelationshipsData extends CollectionResponseRelationshipsData {
+  public items: DegreePagingItem[] = [];
+
+  constructor(data: Partial<CollectionResponseDegreeRelationshipsData> = {}) {
+    super(data);
+    if (data.items) {
+      this.items = data.items.map(item => new DegreePagingItem(item));
+    }
+  }
+}
+
+export class DegreePagingItem extends ResponsePagingItem {
+  public properties: Degree = new Degree();
+
+  constructor(data: Partial<DegreePagingItem> = {}) {
+    super(data);
+    if (data.properties) {
+      this.properties = new Degree(data.properties);
+      this.properties.type = data.type;
+      this.properties.uuid = data.uuid;
+    }
+  }
 }
 
 /**
@@ -741,8 +766,8 @@ export class Fund {
   public money_raised_currency_code: CurrencyCodes = CurrencyCodes.unknown;
   /** currency conversion, if necessary, is done based on the announced_on date */
   public money_raised_usd: IntegerOrNull = null;
-  public created_at: Timestamp = "";
-  public updated_at: Timestamp = "";
+  public created_at: Timestamp = null;
+  public updated_at: Timestamp = null;
   public permalink: String = "";
   public api_url: UrlString = "";
 
@@ -809,8 +834,8 @@ export class FundingRound {
     CurrencyCodes.unknown;
   /** currency conversion, if necessary, is done based on the announced_on date. */
   public target_money_raised_usd: IntegerOrNull = null;
-  public created_at: Timestamp = "";
-  public updated_at: Timestamp = "";
+  public created_at: Timestamp = null;
+  public updated_at: Timestamp = null;
   public permalink: String = "";
   public api_url: UrlString = "";
   public pre_money_valuation: IntegerOrNull = null;
@@ -873,8 +898,8 @@ export class Image {
   public width: IntegerOrNull = null;
   /** file size in bytes */
   public filesize: IntegerOrNull = null;
-  public created_at: Timestamp = "";
-  public updated_at: Timestamp = "";
+  public created_at: Timestamp = null;
+  public updated_at: Timestamp = null;
 
   constructor(data: Partial<Image> = {}) {
     Object.assign(this, data);
@@ -928,8 +953,8 @@ export class Investment {
   public is_lead_investor: BooleanOrNull = null;
   public announced_on: String = "";
   public announced_on_trust_code: TrustCode = TrustCode.NullOrInvalidDate;
-  public created_at: Timestamp = "";
-  public updated_at: Timestamp = "";
+  public created_at: Timestamp = null;
+  public updated_at: Timestamp = null;
 
   constructor(data: Partial<Investment> = {}) {
     Object.assign(this, data);
@@ -1003,8 +1028,8 @@ export class Ipo {
   public money_raised_currency_code: CurrencyCodes = CurrencyCodes.unknown;
   /** currency conversion, when necessary, is done based on the went_public_on date */
   public money_raised_usd: IntegerOrNull = null;
-  public created_at: Timestamp = "";
-  public updated_at: Timestamp = "";
+  public created_at: Timestamp = null;
+  public updated_at: Timestamp = null;
   /** This field contains the full url of the api endpoint */
   public api_url: Path = "";
 
@@ -1056,8 +1081,8 @@ export class Job {
   public started_on_trust_code: TrustCode = TrustCode.NullOrInvalidDate;
   public ended_on: TrustedDate = "";
   public ended_on_trust_code: TrustCode = TrustCode.NullOrInvalidDate;
-  public created_at: Timestamp = "";
-  public updated_at: Timestamp = "";
+  public created_at: Timestamp = null;
+  public updated_at: Timestamp = null;
   public job_type: String = "";
 
   constructor(data: Partial<Job> = {}) {
@@ -1068,6 +1093,15 @@ export class Job {
 export enum JobRelationships {
   person = Relationships.person,
   organization = Relationships.organization
+}
+
+export class CollectionResponseJobRelationshipData extends CollectionResponseRelationshipData {
+  public item: JobPagingItem = new JobPagingItem();
+
+  constructor(data: Partial<CollectionResponseJobRelationshipData> = {}) {
+    super(data);
+    this.item = new JobPagingItem(data.item);
+  }
 }
 
 export class CollectionResponseJobRelationshipsData extends CollectionResponseRelationshipsData {
@@ -1107,8 +1141,8 @@ export class Location {
   public location_type: String = "";
   /** Returned only on the /locations endpoint */
   public parent_location_uuid: UUID = "";
-  public created_at: Timestamp = "";
-  public updated_at: Timestamp = "";
+  public created_at: Timestamp = null;
+  public updated_at: Timestamp = null;
   public city: String = "";
   public region: String = "";
   public region_code2: IntegerOrNull = null;
@@ -1125,6 +1159,30 @@ export enum LocationRelationships {
   parent_locations = Relationships.parent_locations
 }
 
+export class CollectionResponseLocationRelationshipsData extends CollectionResponseRelationshipsData {
+  public cardinality = Cardinality.ManyToOne; // No idea why
+  public items: LocationPagingItem[] = [];
+
+  constructor(data: Partial<CollectionResponseLocationRelationshipsData> = {}) {
+    super(data);
+    if (data.items) {
+      this.items = data.items.map(item => new LocationPagingItem(item));
+    }
+  }
+}
+
+export class LocationPagingItem extends ResponsePagingItem {
+  public properties: Location = new Location();
+  public relationships: object = {}; // TODO
+
+  constructor(data: Partial<LocationPagingItem> = {}) {
+    super(data);
+    this.properties = data.properties
+      ? new Location(data.properties)
+      : this.properties;
+  }
+}
+
 /**
  * @link https://data.crunchbase.com/docs/press-reference
  */
@@ -1133,8 +1191,8 @@ export class News {
   public author: String = "";
   public posted_on: TrustedDate = "";
   public url: UrlString = "";
-  public created_at: Timestamp = "";
-  public updated_at: Timestamp = "";
+  public created_at: Timestamp = null;
+  public updated_at: Timestamp = null;
   public posted_on_trust_code: TrustCode = TrustCode.NullOrInvalidDate;
 
   constructor(data: Partial<News> = {}) {
@@ -1216,8 +1274,8 @@ export class Organization {
   public number_of_investments: IntegerOrNull = null;
   /** Fully-qualified URL */
   public homepage_url: UrlString = "";
-  public created_at: Timestamp = "";
-  public updated_at: Timestamp = "";
+  public created_at: Timestamp = null;
+  public updated_at: Timestamp = null;
   public permalink_aliases: String = "";
   public api_url: UrlString = "";
   public investor_type: String = "";
@@ -1446,8 +1504,8 @@ export class OrganizationSummary {
   public region_name: String = "";
   /** 3 letter code */
   public country_code: String = "";
-  public created_at: Timestamp = "";
-  public updated_at: Timestamp = "";
+  public created_at: Timestamp = null;
+  public updated_at: Timestamp = null;
   public api_url: UrlString = "";
   public stock_exchange: String = "";
   public stock_symbol: String = "";
@@ -1525,8 +1583,8 @@ export class Person {
   public is_deceased: BooleanOrNull = false;
   public died_on: TrustedDate = "";
   public died_on_trust_code: TrustCode = TrustCode.NullOrInvalidDate;
-  public created_at: Timestamp = "";
-  public updated_at: Timestamp = "";
+  public created_at: Timestamp = null;
+  public updated_at: Timestamp = null;
   /** This represents the full URL of the endpoint */
   public api_URL: Path = "";
   public permalink_aliases: String = "";
@@ -1579,6 +1637,88 @@ export class PersonPagingItem extends ResponsePagingItem {
   }
 }
 
+export class PersonResponse extends CollectionResponse {
+  data: PersonResponseData = new PersonResponseData();
+
+  constructor(data: Partial<OrganizationResponse> = {}) {
+    super(data);
+    this.data = data.data ? new PersonResponseData(data.data) : this.data;
+  }
+}
+
+export class PersonResponseData extends CollectionResponseData {
+  public properties: Person = new Person();
+  public relationships: PersonResponseRelationships = new PersonResponseRelationships();
+
+  constructor(data: Partial<OrganizationResponseData> = {}) {
+    super(data);
+    this.properties = data.properties
+      ? new Person(data.properties)
+      : this.properties;
+    this.relationships = data.relationships
+      ? new PersonResponseRelationships(data.relationships)
+      : this.relationships;
+  }
+}
+
+export class PersonResponseRelationships extends CollectionResponseRelationships {
+  public primary_affiliation: CollectionResponseJobRelationshipData = new CollectionResponseJobRelationshipData();
+  public primary_location: CollectionResponseLocationRelationshipsData = new CollectionResponseLocationRelationshipsData();
+  public primary_image: CollectionResponseImageRelationshipData = new CollectionResponseImageRelationshipData();
+  public websites: CollectionResponseWebsiteRelationshipsData = new CollectionResponseWebsiteRelationshipsData();
+  public degrees: CollectionResponseDegreeRelationshipsData = new CollectionResponseDegreeRelationshipsData();
+  public jobs: CollectionResponseJobRelationshipsData = new CollectionResponseJobRelationshipsData();
+  public advisory_roles: CollectionResponseJobRelationshipsData = new CollectionResponseJobRelationshipsData();
+  public founded_companies: CollectionResponseOrganizationRelationshipsData = new CollectionResponseOrganizationRelationshipsData();
+  public investments: CollectionResponseInvestmentRelationshipsData = new CollectionResponseInvestmentRelationshipsData();
+  /** @deprecated Note: This node has been deprecated so this will return an empty array */
+  public memberships: object = {};
+  public images: CollectionResponseImageRelationshipsData = new CollectionResponseImageRelationshipsData();
+  /** @deprecated Note: This node has been deprecated so this will return an empty array */
+  public videos: object = {};
+  public news: CollectionResponseNewsRelationshipsData = new CollectionResponseNewsRelationshipsData();
+
+  constructor(data: Partial<PersonResponseRelationships> = {}) {
+    super(data);
+    this.primary_affiliation = data.primary_affiliation
+      ? new CollectionResponseJobRelationshipData(data.primary_affiliation)
+      : this.primary_affiliation;
+    this.primary_location = data.primary_location
+      ? new CollectionResponseLocationRelationshipsData(data.primary_location)
+      : this.primary_location;
+    this.primary_image = data.primary_image
+      ? new CollectionResponseImageRelationshipData(data.primary_image)
+      : this.primary_image;
+    this.websites = data.websites
+      ? new CollectionResponseWebsiteRelationshipsData(data.websites)
+      : this.websites;
+    this.degrees = data.degrees
+      ? new CollectionResponseDegreeRelationshipsData(data.degrees)
+      : this.degrees;
+    this.jobs = data.jobs
+      ? new CollectionResponseJobRelationshipsData(data.jobs)
+      : this.jobs;
+    this.advisory_roles = data.advisory_roles
+      ? new CollectionResponseJobRelationshipsData(data.advisory_roles)
+      : this.advisory_roles;
+    this.founded_companies = data.founded_companies
+      ? new CollectionResponseOrganizationRelationshipsData(
+          data.founded_companies
+        )
+      : this.founded_companies;
+    this.investments = data.investments
+      ? new CollectionResponseInvestmentRelationshipsData(data.investments)
+      : this.investments;
+
+    this.images = data.images
+      ? new CollectionResponseImageRelationshipsData(data.images)
+      : this.images;
+    this.news = data.news
+      ? new CollectionResponseNewsRelationshipsData(data.news)
+      : this.news;
+  }
+}
+
 /**
  * @link https://data.crunchbase.com/docs/personsummary
  */
@@ -1603,13 +1743,54 @@ export class PersonSummary {
   public city_name: String = "";
   public region_name: String = "";
   public country_code: String = "";
-  public created_at: Timestamp = "";
-  public updated_at: Timestamp = "";
+  public created_at: Timestamp = null;
+  public updated_at: Timestamp = null;
   public api_url: UrlString = "";
   public gender: String = "";
 
   constructor(data: Partial<PersonSummary> = {}) {
     Object.assign(this, data);
+  }
+}
+
+export interface IPeopleCallParams {
+  updated_since?: string; // When provided, restricts the result set to Organizations where updated_at >= the passed value
+  query?: string; // Full text search of an Organization's name, aliases (i.e. previous names or "also known as"), and short description
+  name?: string; // Full text search limited to name and aliases
+  locations?: string; // Filter by location names (comma separated, AND'd together) e.g. locations=California,San Francisco
+  socials: string; // Filter by social media identity (comma separated, AND'd together) e.g. socials=ronconway
+  types?: "investor";
+  sort_order?: SortOptionParam;
+  page?: number; // Page number of the results to retrieve.
+}
+
+export class PeopleSummaryResponse extends PagedResponse {
+  data: PeopleSummaryPagedResponseData = new PeopleSummaryPagedResponseData();
+
+  constructor(data: Partial<PeopleSummaryResponse> = {}) {
+    super(data);
+    this.data = new PeopleSummaryPagedResponseData(data.data);
+  }
+}
+
+export class PeopleSummaryPagedResponseData extends PagedResponseData {
+  items: PeopleSummaryPagingItem[] = [];
+
+  constructor(data: Partial<PeopleSummaryPagedResponseData> = {}) {
+    super(data);
+    if (data.items) {
+      this.items = data.items.map(item => new PeopleSummaryPagingItem(item));
+    }
+  }
+}
+
+export class PeopleSummaryPagingItem extends ResponsePagingItem {
+  properties: PersonSummary = new PersonSummary();
+
+  constructor(data: Partial<PeopleSummaryPagingItem> = {}) {
+    super(data);
+
+    this.properties = new PersonSummary(data.properties);
   }
 }
 
@@ -1619,8 +1800,8 @@ export class PersonSummary {
 export class Website {
   public website_type: WebsiteType = WebsiteType.unknown;
   public url: UrlString = "";
-  public created_at: Timestamp = "";
-  public updated_at: Timestamp = "";
+  public created_at: Timestamp = null;
+  public updated_at: Timestamp = null;
   public website_name: String = "";
 
   constructor(data: Partial<Website> = {}) {

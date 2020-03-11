@@ -55,7 +55,21 @@ import {
   WebsitePagingItem,
   Website,
   NewsPagingItem,
-  News
+  News,
+  PeopleSummaryResponse,
+  PeopleSummaryPagedResponseData,
+  PeopleSummaryPagingItem,
+  PersonSummary,
+  PersonResponse,
+  PersonResponseData,
+  PersonResponseRelationships,
+  CollectionResponseLocationRelationshipsData,
+  CollectionResponseDegreeRelationshipsData,
+  LocationPagingItem,
+  Location,
+  DegreePagingItem,
+  Degree,
+  CollectionResponseJobRelationshipData
 } from "./CrunchbaseServiceTypes";
 import { TIMINGS } from "./constants";
 
@@ -132,6 +146,19 @@ const expectCategory = (category: Category) => {
   // expect(category.path).toBeTruthy(); // Not always there
 };
 
+const expectDegree = (degree: Degree) => {
+  expect(degree).toBeInstanceOf(Degree);
+  expect(degree.type).toBeTruthy();
+  expect(degree.uuid).toBeTruthy();
+  // expect(degree.started_on).toBeTruthy(); // Not always there
+  // expect(degree.started_on_trust_code).toBeTruthy(); // Not always there
+  // expect(degree.completed_on).toBeTruthy(); // Not always there
+  // expect(degree.completed_on_trust_code).toBeTruthy(); // Not always there
+  expect(degree.degree_type_name).toBeTruthy();
+  expect(degree.degree_subject).toBeTruthy();
+  expect(degree.created_at).toBeTruthy();
+};
+
 const expectFund = (fund: Fund) => {
   expectApiCollectionProperties(fund);
   expect(fund).toBeInstanceOf(Fund);
@@ -189,6 +216,21 @@ const expectJob = (job: Job) => {
   // expect(job.started_on).toBeTruthy(); // This won't always be there
   // expect(job.started_on_trust_code).toBeTruthy(); // This won't always be there
   expect(job.title).toBeTruthy();
+};
+
+const expectLocation = (location: Location) => {
+  expect(location).toBeInstanceOf(Location);
+  expect(location.web_path).toBeTruthy();
+  expect(location.name).toBeTruthy();
+  expect(location.location_type).toBeTruthy();
+  // expect(location.parent_location_uuid).toBeTruthy(); // // Not always there
+  expect(location.created_at).toBeTruthy();
+  expect(location.city).toBeTruthy();
+  expect(location.region).toBeTruthy();
+  expect(location.region_code2).toBeTruthy();
+  expect(location.country).toBeTruthy();
+  expect(location.country_code2).toBeTruthy();
+  expect(location.country_code3).toBeTruthy();
 };
 
 const expectNews = (news: News) => {
@@ -260,7 +302,9 @@ describe("crunchbaseService", () => {
     expectPagingItem(item);
     const summary = item.properties;
     expect(summary).toBeInstanceOf(OrganizationSummary);
+    expectApiCollectionProperties(summary);
     expect(summary.name).toBeTruthy();
+    expect(summary.primary_role).toBeTruthy();
     done();
   });
 
@@ -571,4 +615,189 @@ describe("crunchbaseService", () => {
     },
     TIMINGS.organizationsTimeout + TIMINGS.organizationTimeout
   );
+
+  it("should return a people response", async done => {
+    const response = await crunchbaseService.getPeople({
+      name: "Buffet"
+    });
+
+    expect(response).toBeInstanceOf(PeopleSummaryResponse);
+    expectMetaData(response.metadata);
+    expect(response.data).toBeInstanceOf(PeopleSummaryPagedResponseData);
+    expectPagingData(response.data.paging);
+    expect(response.data.items.length).toBeGreaterThan(0);
+
+    const item = response.data.items.shift();
+    expect(item).toBeInstanceOf(PeopleSummaryPagingItem);
+    expectPagingItem(item);
+    const summary = item.properties;
+    expect(summary).toBeInstanceOf(PersonSummary);
+    expectApiCollectionProperties(summary);
+    expect(summary.first_name).toBeTruthy();
+    expect(summary.last_name).toBeTruthy();
+    expect(summary.title).toBeTruthy();
+    expect(summary.organization_name).toBeTruthy();
+    expect(summary.organization_api_path).toBeTruthy();
+    expect(summary.organization_permalink).toBeTruthy();
+    expect(summary.organization_web_path).toBeTruthy();
+    done();
+  });
+
+  it("should return an person response", async done => {
+    const summaryResponse = await crunchbaseService.getPeople({
+      name: "Buffet"
+    });
+
+    const response = await crunchbaseService.getPerson(
+      summaryResponse.data.items[0].properties.permalink
+    );
+
+    // Going to apologize to you right now. Sorry about how big this is.
+    // Breaking it into sub functions to at least keep it more manageable.
+    expect(response).toBeInstanceOf(PersonResponse);
+    expectMetaData(response.metadata);
+    expect(response.data).toBeInstanceOf(PersonResponseData);
+    expect(response.data.type).toBe(CollectionTypes.Person);
+    expect(response.data.uuid).toBeTruthy();
+    expectPerson(response.data.properties);
+    expectRelationships(response.data.relationships);
+
+    function expectRelationships(relationships: PersonResponseRelationships) {
+      // Primary affiliation
+      const primaryAffiliation = relationships.primary_affiliation;
+      expect(primaryAffiliation).toBeInstanceOf(
+        CollectionResponseJobRelationshipData
+      );
+      expect(primaryAffiliation.cardinality).toBe(Cardinality.OneToOne);
+      expectRelationshipPagingData(primaryAffiliation.paging);
+      expect(primaryAffiliation.item).toBeInstanceOf(JobPagingItem);
+      expectPagingItem(primaryAffiliation.item);
+      expectJob(primaryAffiliation.item.properties);
+
+      // Primary location
+      const primaryLocations = relationships.primary_location;
+      expect(primaryLocations).toBeInstanceOf(
+        CollectionResponseLocationRelationshipsData
+      );
+      expect(primaryLocations.cardinality).toBe(Cardinality.ManyToOne);
+      expectRelationshipPagingData(primaryLocations.paging);
+      const primaryLocation = primaryLocations.items.shift();
+      if (primaryLocation) {
+        expect(primaryLocation).toBeInstanceOf(LocationPagingItem);
+        expectPagingItem(primaryLocation);
+        expectLocation(primaryLocation.properties);
+      }
+
+      // Primary image
+      const primaryImage = relationships.primary_image;
+      expect(primaryImage).toBeInstanceOf(
+        CollectionResponseImageRelationshipData
+      );
+      expect(primaryImage.cardinality).toBe(Cardinality.OneToOne);
+      expectRelationshipPagingData(primaryImage.paging);
+      expect(primaryImage.item).toBeInstanceOf(ImagePagingItem);
+      expectPagingItem(primaryImage.item);
+      expectImage(primaryImage.item.properties);
+
+      // Websites
+      const websites = relationships.websites;
+      expect(websites).toBeInstanceOf(
+        CollectionResponseWebsiteRelationshipsData
+      );
+      expectRelationshipPagingData(websites.paging);
+      const website = websites.items.shift();
+      if (website) {
+        expect(website).toBeInstanceOf(WebsitePagingItem);
+        expectPagingItem(website);
+        expectWebsite(website.properties);
+      }
+
+      // Degrees
+      const degrees = relationships.degrees;
+      expect(degrees).toBeInstanceOf(CollectionResponseDegreeRelationshipsData);
+      expectRelationshipPagingData(websites.paging);
+      const degree = degrees.items.shift();
+      if (degree) {
+        expect(degree).toBeInstanceOf(DegreePagingItem);
+        expectPagingItem(degree);
+        expectDegree(degree.properties);
+      }
+
+      // Jobs
+      const jobs = relationships.jobs;
+      expect(jobs).toBeInstanceOf(CollectionResponseJobRelationshipsData);
+      expectRelationshipPagingData(jobs.paging);
+      const job = jobs.items.shift();
+      if (job) {
+        expect(job).toBeInstanceOf(JobPagingItem);
+        expectPagingItem(job);
+        expectJob(job.properties);
+      }
+
+      // advisory_roles
+      const advisoryRoles = relationships.advisory_roles;
+      expect(advisoryRoles).toBeInstanceOf(
+        CollectionResponseJobRelationshipsData
+      );
+      expect(advisoryRoles).toBeInstanceOf(
+        CollectionResponseJobRelationshipsData
+      );
+      expectRelationshipPagingData(advisoryRoles.paging);
+      const advisoryRole = advisoryRoles.items.shift();
+      if (advisoryRole) {
+        expect(advisoryRole).toBeInstanceOf(JobPagingItem);
+        expectPagingItem(advisoryRole);
+        expectJob(advisoryRole.properties);
+      }
+
+      // founded_companies
+      const foundedCompanies = relationships.founded_companies;
+      expect(foundedCompanies).toBeInstanceOf(
+        CollectionResponseOrganizationRelationshipsData
+      );
+      expectRelationshipPagingData(foundedCompanies.paging);
+      const foundedCompany = foundedCompanies.items.shift();
+      if (foundedCompany) {
+        expect(foundedCompany).toBeInstanceOf(OrganizationPagingItem);
+        expectPagingItem(foundedCompany);
+        expectOrganization(foundedCompany.properties);
+      }
+
+      // Investments
+      const investments = relationships.investments;
+      expect(investments).toBeInstanceOf(
+        CollectionResponseInvestmentRelationshipsData
+      );
+      expectRelationshipPagingData(investments.paging);
+      const investment = investments.items.shift();
+      if (investment) {
+        expect(investment).toBeInstanceOf(InvestmentPagingItem);
+        expectPagingItem(investment);
+        expectInvestment(investment.properties);
+      }
+
+      // Images
+      const images = relationships.images;
+      expect(images).toBeInstanceOf(CollectionResponseImageRelationshipsData);
+      expectRelationshipPagingData(images.paging);
+      const image = images.items.shift();
+      if (image) {
+        expect(image).toBeInstanceOf(ImagePagingItem);
+        expectPagingItem(image);
+        expectImage(image.properties);
+      }
+
+      // News
+      const newsItems = relationships.news;
+      expect(newsItems).toBeInstanceOf(CollectionResponseNewsRelationshipsData);
+      expectRelationshipPagingData(newsItems.paging);
+      const newsItem = newsItems.items.shift();
+      if (newsItem) {
+        expect(newsItem).toBeInstanceOf(NewsPagingItem);
+        expectPagingItem(newsItem);
+        expectNews(newsItem.properties);
+      }
+    }
+    done();
+  });
 });

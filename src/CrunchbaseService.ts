@@ -7,9 +7,12 @@ import axios, {
 import { TIMINGS } from "./constants";
 import {
   IOrganizationsCallParams,
+  IPeopleCallParams,
   IServiceOptions,
   OrganizationResponse,
-  OrganizationsSummaryResponse
+  OrganizationsSummaryResponse,
+  PeopleSummaryResponse,
+  PersonResponse
 } from "./CrunchbaseServiceTypes";
 
 export default class CrunchbaseService {
@@ -17,6 +20,7 @@ export default class CrunchbaseService {
   protected static V3_URI = "v3.1/";
   protected static ENDPOINT_ORGANIZATIONS =
     CrunchbaseService.V3_URI + "organizations";
+  protected static ENDPOINT_PEOPLE = CrunchbaseService.V3_URI + "people";
 
   protected static DEFAULT_TIMEOUT = TIMINGS.defaultTimeout;
 
@@ -104,6 +108,10 @@ export default class CrunchbaseService {
     });
   }
 
+  /**
+   * @link https://data.crunchbase.com/reference#organizations
+   * @param options
+   */
   public getOrganizations(
     options: Partial<IOrganizationsCallParams> = {}
   ): Promise<OrganizationsSummaryResponse> {
@@ -115,12 +123,53 @@ export default class CrunchbaseService {
       .then(response => new OrganizationsSummaryResponse(response.data));
   }
 
+  /**
+   * @link https://data.crunchbase.com/reference#organization-permalink
+   * @param permalink
+   */
   public getOrganization(permalink: string): Promise<OrganizationResponse> {
     return this.client
       .get([CrunchbaseService.ENDPOINT_ORGANIZATIONS, permalink].join("/"), {
         timeout: TIMINGS.organizationTimeout
       })
       .then(response => new OrganizationResponse(response.data));
+  }
+
+  // @link https://data.crunchbase.com/reference#organizations-permalink-relationship_name
+  // public getOrganizationRelationships(
+  //     permalink: string,
+  //     relationship: OrganizationRelationships,
+  //     options Partial<ICallOrganizationRelationshipsParams> = {}
+  //   ): Promise<object> {
+  //   return this.client
+  //       .get([CrunchbaseService.ENDPOINT_ORGANIZATIONS, permalink].join("/"), {
+  //         timeout: TIMINGS.organizationTimeout
+  //       })
+  //       .then(response => new OrganizationResponse(response.data));
+  // }
+
+  /**
+   * @link https://data.crunchbase.com/reference#people
+   * @param options
+   */
+  public getPeople(
+    options: Partial<IPeopleCallParams> = {}
+  ): Promise<PeopleSummaryResponse> {
+    return this.client
+      .get(CrunchbaseService.ENDPOINT_PEOPLE, {
+        params: options
+      })
+      .then(response => new PeopleSummaryResponse(response.data));
+  }
+
+  /**
+   * @link https://data.crunchbase.com/reference#person-permalink
+   * @param permalink
+   */
+  public getPerson(permalink: string): Promise<PersonResponse> {
+    return this.client
+      .get([CrunchbaseService.ENDPOINT_PEOPLE, permalink].join("/"))
+      .then(response => new PersonResponse(response.data));
   }
 
   // TODO The api gives us urls like "first_page_url": "https://api.crunchbase.com/v3.1/organizations/tesla-motors/competitors". We have to figure out how to follow and type those.
