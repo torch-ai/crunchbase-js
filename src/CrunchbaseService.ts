@@ -12,7 +12,8 @@ import {
   OrganizationResponse,
   OrganizationsSummaryResponse,
   PeopleSummaryResponse,
-  PersonResponse
+  PersonResponse,
+  TrustCode
 } from "./CrunchbaseServiceTypes";
 
 export default class CrunchbaseService {
@@ -29,6 +30,44 @@ export default class CrunchbaseService {
   protected options: IServiceOptions = {
     onInvalidCredentials: () => {}
   };
+
+  public static formatDate(
+    property: string,
+    trustCode: TrustCode,
+    format: string = "short"
+  ): string {
+    const unknown = "Unknown";
+    if (!property || !trustCode) {
+      return unknown;
+    }
+
+    const date = new Date(property);
+    switch (trustCode) {
+      case TrustCode.Day:
+        return date.toLocaleString("default", { day: "numeric" });
+      case TrustCode.DayAndMonth:
+        return date.toLocaleString("default", {
+          month: format,
+          day: "numeric"
+        });
+      case TrustCode.Month:
+        return date.toLocaleString("default", { month: format });
+      case TrustCode.Year:
+        return date.toLocaleString("default", { year: format });
+      case TrustCode.YearAndDay:
+        return date.toLocaleString("default", { year: format, day: "numeric" });
+      case TrustCode.YearAndMonth:
+        return date.toLocaleString("default", { year: format, month: format });
+      case TrustCode.YearMonthAndDay:
+        return date.toLocaleString("default", {
+          year: format,
+          month: format,
+          day: format
+        });
+      default:
+        return unknown;
+    }
+  }
 
   public constructor(apiKey: string, options: Partial<IServiceOptions> = {}) {
     this.apiKey = apiKey;

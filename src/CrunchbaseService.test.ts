@@ -1,75 +1,76 @@
 import dotenv from "dotenv";
 import CrunchbaseService from "./CrunchbaseService";
 import {
-  Organization,
-  OrganizationsSummaryPagingItem,
-  OrganizationsSummaryPagedResponseData,
-  OrganizationsSummaryResponse,
-  ResponseMetaData,
-  ResponsePagingData,
-  OrganizationSummary,
-  OrganizationResponse,
-  OrganizationResponseData,
-  CollectionTypes,
-  OrganizationResponseRelationships,
-  CollectionResponseInvestmentRelationshipsData,
-  CollectionResponseImageRelationshipData,
-  CollectionResponsePersonRelationshipsData,
-  CollectionResponseJobRelationshipsData,
-  CollectionResponseOrganizationOrPersonRelationshipsData,
-  CollectionResponseOrganizationRelationshipsData,
+  Acquisition,
+  AcquisitionPagingItem,
+  Address,
+  AddressPagingItem,
+  Cardinality,
+  Category,
+  CategoryPagingItem,
+  CollectionResponseAcquisitionRelationshipData,
+  CollectionResponseAcquisitionRelationshipsData,
   CollectionResponseAddressRelationshipData,
   CollectionResponseAddressRelationshipsData,
   CollectionResponseCategoryRelationshipsData,
+  CollectionResponseDegreeRelationshipsData,
   CollectionResponseFundingRoundRelationshipsData,
-  CollectionResponseAcquisitionRelationshipsData,
-  CollectionResponseAcquisitionRelationshipData,
-  CollectionResponseIpoRelationshipData,
   CollectionResponseFundRelationshipsData,
-  CollectionResponseWebsiteRelationshipsData,
+  CollectionResponseImageRelationshipData,
   CollectionResponseImageRelationshipsData,
+  CollectionResponseInvestmentRelationshipsData,
+  CollectionResponseIpoRelationshipData,
+  CollectionResponseJobRelationshipData,
+  CollectionResponseJobRelationshipsData,
+  CollectionResponseLocationRelationshipsData,
   CollectionResponseNewsRelationshipsData,
-  Cardinality,
+  CollectionResponseOrganizationOrPersonRelationshipsData,
+  CollectionResponseOrganizationRelationshipsData,
+  CollectionResponsePersonRelationshipsData,
   CollectionResponseRelationshipPagingData,
-  ImagePagingItem,
-  Image,
-  PersonPagingItem,
-  Person,
-  JobPagingItem,
-  Job,
-  OrganizationPagingItem,
-  AddressPagingItem,
-  Address,
-  CategoryPagingItem,
-  Category,
-  FundingRoundPagingItem,
+  CollectionResponseWebsiteRelationshipsData,
+  CollectionTypes,
+  Degree,
+  DegreePagingItem,
+  Fund,
   FundingRound,
-  InvestmentPagingItem,
+  FundingRoundPagingItem,
+  FundPagingItem,
+  Image,
+  ImagePagingItem,
   Investment,
-  Acquisition,
-  AcquisitionPagingItem,
+  InvestmentPagingItem,
   Ipo,
   IpoPagingItem,
-  FundPagingItem,
-  Fund,
-  WebsitePagingItem,
-  Website,
-  NewsPagingItem,
+  Job,
+  JobPagingItem,
+  Location,
+  LocationPagingItem,
   News,
-  PeopleSummaryResponse,
+  NewsPagingItem,
+  Organization,
+  OrganizationPagingItem,
+  OrganizationResponse,
+  OrganizationResponseData,
+  OrganizationResponseRelationships,
+  OrganizationsSummaryPagedResponseData,
+  OrganizationsSummaryPagingItem,
+  OrganizationsSummaryResponse,
+  OrganizationSummary,
   PeopleSummaryPagedResponseData,
   PeopleSummaryPagingItem,
-  PersonSummary,
+  PeopleSummaryResponse,
+  Person,
+  PersonPagingItem,
   PersonResponse,
   PersonResponseData,
   PersonResponseRelationships,
-  CollectionResponseLocationRelationshipsData,
-  CollectionResponseDegreeRelationshipsData,
-  LocationPagingItem,
-  Location,
-  DegreePagingItem,
-  Degree,
-  CollectionResponseJobRelationshipData
+  PersonSummary,
+  ResponseMetaData,
+  ResponsePagingData,
+  TrustCode,
+  Website,
+  WebsitePagingItem
 } from "./CrunchbaseServiceTypes";
 import { TIMINGS } from "./constants";
 
@@ -272,6 +273,79 @@ describe("crunchbaseService", () => {
   dotenv.config();
   const crunchbaseService = new CrunchbaseService(process.env.API_KEY, {
     onInvalidCredentials: onInvalidCredentials
+  });
+
+  it("should format trusted dates", () => {
+    const testDate = new Date();
+    const year = testDate.getFullYear();
+    const month = testDate.getMonth();
+    const date = testDate.getDate();
+    const dateString = `${year}-${month}-${date}`;
+    const yearRegex = new RegExp(`${year}`, "i");
+    const monthRegex = new RegExp(`${month}`, "i");
+    const dateRegex = new RegExp(`${date}`, "i");
+
+    const dateTrusted = CrunchbaseService.formatDate(
+      dateString,
+      TrustCode.Day,
+      "numeric"
+    );
+    expect(dateTrusted).toMatch(dateRegex);
+    expect(dateTrusted).not.toMatch(yearRegex);
+
+    const dayAndMonthTrusted = CrunchbaseService.formatDate(
+      dateString,
+      TrustCode.DayAndMonth,
+      "numeric"
+    );
+    expect(dayAndMonthTrusted).toMatch(dateRegex);
+    expect(dayAndMonthTrusted).toMatch(monthRegex);
+    expect(dayAndMonthTrusted).not.toMatch(yearRegex);
+
+    const monthTrusted = CrunchbaseService.formatDate(
+      dateString,
+      TrustCode.Month,
+      "numeric"
+    );
+    // expect(dayAndMonthTrusted).not.toMatch(dateRegex);
+    expect(monthTrusted).toMatch(monthRegex);
+    expect(monthTrusted).not.toMatch(yearRegex);
+
+    const yearTrusted = CrunchbaseService.formatDate(
+      dateString,
+      TrustCode.Year,
+      "numeric"
+    );
+    // expect(yearTrusted).not.toMatch(dateRegex);
+    // expect(yearTrusted).not.toMatch(monthRegex);
+    expect(yearTrusted).toMatch(yearRegex);
+
+    const yearAndDayTrusted = CrunchbaseService.formatDate(
+      dateString,
+      TrustCode.YearAndDay,
+      "numeric"
+    );
+    expect(yearAndDayTrusted).toMatch(dateRegex);
+    // expect(yearTrusted).not.toMatch(monthRegex);
+    expect(yearAndDayTrusted).toMatch(yearRegex);
+
+    const yearAndMonthTrusted = CrunchbaseService.formatDate(
+      dateString,
+      TrustCode.YearAndMonth,
+      "numeric"
+    );
+    // expect(yearAndMonthTrusted).not.toMatch(dateRegex);
+    expect(yearAndMonthTrusted).toMatch(monthRegex);
+    expect(yearAndMonthTrusted).toMatch(yearRegex);
+
+    const trusted = CrunchbaseService.formatDate(
+      dateString,
+      TrustCode.YearMonthAndDay,
+      "numeric"
+    );
+    expect(trusted).toMatch(dateRegex);
+    expect(trusted).toMatch(monthRegex);
+    expect(trusted).toMatch(yearRegex);
   });
 
   it("should be an instance of CrunchbaseService", () => {
