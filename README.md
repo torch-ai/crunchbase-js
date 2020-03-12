@@ -39,6 +39,15 @@ try {
 } catch (error) {}
 ```
 
+## License and agreements
+
+This package is provided through an MIT license. Usage of this package is freely available without restriction.
+
+Crunchbase itself has it's own
+[terms of service](https://about.crunchbase.com/terms-of-service/),
+[account registration](https://about.crunchbase.com/products/crunchbase-for-applications/),
+and [attribution requirements](https://data.crunchbase.com/docs/using-the-api#section-using-the-rest-api).
+
 # Contributing
 
 ## Installation
