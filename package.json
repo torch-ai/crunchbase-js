@@ -1,6 +1,6 @@
 {
-  "name": "@demo/services",
-  "version": "2.4.2",
+  "name": "@torch-data/crunchbase",
+  "version": "0.3.0",
   "description": "Provides a middle tier for use in demo service clients.",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
