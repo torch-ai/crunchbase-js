@@ -1,7 +1,7 @@
 {
   "name": "@torch-data-connectors/crunchbase",
   "version": "0.3.0",
-  "description": "Provides a middle tier for use in demo service clients.",
+  "description": "Provides an api client and types for the Crunchbase service",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
   "jsnext:main": "dist/index.es.js",
