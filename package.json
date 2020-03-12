@@ -23,7 +23,7 @@
     "url": "https://dev.azure.com/TorchResearchLLC/TORCH%20Demo%20Backlog/_git/crunchbase-service"
   },
   "author": "Lance Gliser",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "@rollup/plugin-json": "^4.0.0",
     "@types/jest": "^24.0.24",
