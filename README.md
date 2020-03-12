@@ -9,10 +9,16 @@ Current version: v3.1
 ## Installation
 
 Ensure you have access to the private artifact repositories through a `.npmrc` file.
+This will require updating your own personal `.npmrc`, and the project's `.npmrc` with entries for:
+
+```
+@torch-data-connectors:registry=https://pkgs.dev.azure.com/TorchResearchLLC/Torch-Data-Connectors/_packaging/torch-data-connectors/npm/registry/
+```
+
 Install the service in your own project
 
 ```
-npm install @demo/crunchbase-services
+npm install @torch-data-connectors/crunchbase-services
 ```
 
 ## Initialization
@@ -21,7 +27,7 @@ At the top of your application, or in an imported configuration file:
 
 ```js
 // Import the service definition and environment constants
-import CrunchbaseService from "@demo/crunchbase-services";
+import CrunchbaseService from "@torch-data-connectors/crunchbase-services";
 
 // Create an instance of the service
 const options = {};
