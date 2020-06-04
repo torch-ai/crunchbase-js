@@ -1188,7 +1188,7 @@ export class LocationPagingItem extends ResponsePagingItem {
  */
 export class News {
   public title: String = "";
-  public author: String = "";
+  public author?: String = "";
   public posted_on: TrustedDate = "";
   public url: UrlString = "";
   public created_at: Timestamp = null;

@@ -239,7 +239,6 @@ const expectNews = (news: News) => {
   expect(news.title).toBeTruthy();
   expect(news.posted_on).toBeTruthy();
   expect(news.posted_on_trust_code).toBeTruthy();
-  expect(news.author).toBeTruthy();
   expect(news.created_at).toBeTruthy();
   expect(news.url).toBeTruthy();
 };
