@@ -8,17 +8,10 @@ Current version: v3.1
 
 ## Installation
 
-Ensure you have access to the private artifact repositories through a `.npmrc` file.
-This will require updating your own personal `.npmrc`, and the project's `.npmrc` with entries for:
-
-```
-@torch-data-connectors:registry=https://pkgs.dev.azure.com/TorchResearchLLC/Torch-Data-Connectors/_packaging/torch-data-connectors/npm/registry/
-```
-
 Install the service in your own project
 
 ```
-npm install @torch-data-connectors/crunchbase-services
+npm install @torch-ai/crunchbase
 ```
 
 ## Initialization
@@ -27,19 +20,19 @@ At the top of your application, or in an imported configuration file:
 
 ```js
 // Import the service definition and environment constants
-import CrunchbaseService from "@torch-data-connectors/crunchbase-services";
+import Crunchbase from "@torch-ai/crunchbase";
 
 // Create an instance of the service
 const options = {};
-const crunchbaseService = new CrunchbaseService(process.env.API_KEY, options);
-export default crunchbaseService;
+const crunchbase = new Crunchbase(process.env.API_KEY, options);
+export default crunchbase;
 ```
 
 ## Calls
 
 ```js
 try {
-  const results = await crunchbaseService.getOrganizations({
+  const results = await crunchbase.getOrganizations({
     name: "Tesla"
   });
 } catch (error) {}
@@ -80,9 +73,4 @@ npm run-script test:watch
 
 ## Publishing
 
-Be sure to bump the package.json version first.
-Run the publish command which will: run tests, build js files will rollup, emit typescript files, and publish to our private repositories.
-
-```
-npm publish
-```
+Open an issue requesting a version to publish.
