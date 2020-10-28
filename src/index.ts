@@ -1,5 +1,4 @@
-import CrunchbaseService from './CrunchbaseService';
+import Service from "./Service";
 
-export default CrunchbaseService;
-export * from './CrunchbaseServiceTypes';
-export * from './constants';
+export default Service;
+export * from "./Service.types";
