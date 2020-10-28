@@ -2,7 +2,7 @@
 
 > This package provides a standardized layer for accessing [crunchbase services](https://data.crunchbase.com/docs/using-the-api) along with data types.
 
-Current version: v3.1
+Current version: [v4.0](https://data.crunchbase.com/docs_)
 
 # Usage
 
@@ -33,7 +33,7 @@ export default crunchbase;
 ```js
 try {
   const results = await crunchbase.getOrganizations({
-    name: "Tesla"
+    name: "Tesla",
   });
 } catch (error) {}
 ```
