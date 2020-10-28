@@ -7,6 +7,7 @@ import axios, {
 import { IServiceOptions } from "./Service.types";
 import Search from "./components/search/Search";
 import Autocomplete from "./components/autocomplete/Autocomplete";
+import Entities from "./components/entities/Entities";
 
 export default class Service {
   protected static SERVER_URI = "https://api.crunchbase.com/";
@@ -19,6 +20,7 @@ export default class Service {
   };
 
   public autocomplete: Autocomplete;
+  public entities: Entities;
   public search: Search;
 
   // public static formatDate(
@@ -66,6 +68,7 @@ export default class Service {
       baseURL: Service.SERVER_URI + Service.V4_URI,
     });
     this.autocomplete = new Autocomplete(this.client);
+    this.entities = new Entities(this.client);
     this.search = new Search(this.client);
 
     // Bind to incoming requests
