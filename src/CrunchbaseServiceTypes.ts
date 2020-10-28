@@ -143,7 +143,7 @@ export enum Cardinality {
   OneToOne = "OneToOne",
   OneToMany = "OneToMany",
   ManyToOne = "ManyToOne", // .... Why?
-  ManyToMany = "ManyToMany"
+  ManyToMany = "ManyToMany",
 }
 
 export enum SortOptionParam {
@@ -151,7 +151,7 @@ export enum SortOptionParam {
   CreatedAsc = "created_at ASC",
   CreatedDesc = "created_at DESC",
   UpdatedAsc = "updated_at ASC",
-  UpdatedDesc = "updated_at DESC"
+  UpdatedDesc = "updated_at DESC",
 }
 
 /**
@@ -177,7 +177,7 @@ export enum AcquisitionPaymentTypes {
   unknown = "",
   cash = "cash", // Acquired for all cash
   stock = "stock", // Acquired for stock
-  cash_and_stock = "cash_and_stock" // Acquired for a combination of cash and stock
+  cash_and_stock = "cash_and_stock", // Acquired for a combination of cash and stock
 }
 
 /**
@@ -187,7 +187,7 @@ export enum AcquisitionTypes {
   unknown = "",
   Acquisition = "Acquisition", // Acquisition of the Organization in its entirety.
   AcquiHire = "Acqui-Hire", // Acquisition of the Organization for the primary purpose of acquiring the talent.
-  LBO = "LBO" // Leveraged Buy-Out
+  LBO = "LBO", // Leveraged Buy-Out
 }
 
 /**
@@ -197,7 +197,7 @@ export enum AcquisitionStatuses {
   unknown = "",
   Pending = "Pending", // Announced but not yet complete
   Complete = "Complete", // Completed and closed
-  Cancelled = "Cancelled" // Cancelled after announcement
+  Cancelled = "Cancelled", // Cancelled after announcement
 }
 
 /**
@@ -209,12 +209,12 @@ export enum AcquisitionDispositions {
   Product = "Product", // The acquired Organization is rolled into the acquirer as a Product
   Division = "Division", // The acquired Organization becomes a Division of the acquirer
   Subsidiary = "Subsidiary", // The acquired Organization becomes a Subsidiary of the acquirer
-  Combined = "Combined" // The acquired Organization is combined / merged with the acquirer
+  Combined = "Combined", // The acquired Organization is combined / merged with the acquirer
 }
 
 export enum CollectionTypes {
   Organization = "Organization",
-  Person = "Person"
+  Person = "Person",
 }
 
 /**
@@ -393,7 +393,7 @@ export enum CurrencyCodes {
   ZMK = "ZMK", //
   ZMW = "ZMW", // Zambia Kwacha
   ZWD = "ZWD", // Zimbabwe Dollar
-  ZWL = "ZWL" //
+  ZWL = "ZWL", //
 }
 
 /**
@@ -428,7 +428,7 @@ export enum FundingTypes {
   series_h = "series_h", // Series H
   series_i = "series_i", // Series I
   series_j = "series_j", // Series J
-  series_unknown = "series_unknown" // Venture - Series Unknown
+  series_unknown = "series_unknown", // Venture - Series Unknown
 }
 
 enum Relationships {
@@ -477,7 +477,7 @@ enum Relationships {
   sub_organizations = "sub_organizations",
   venture_firm = "venture_firm",
   videos = "videos",
-  websites = "websites"
+  websites = "websites",
 }
 
 /**
@@ -498,7 +498,7 @@ export enum TrustCode {
   Year = 4,
   YearAndDay = 5,
   YearAndMonth = 6,
-  YearMonthAndDay = 7
+  YearMonthAndDay = 7,
 }
 
 /**
@@ -509,7 +509,7 @@ export enum WebsiteType {
   facebook = "facebook",
   linkedin = "linkedin",
   twitter = "twitter",
-  homepage = "homepage"
+  homepage = "homepage",
 }
 
 /**
@@ -560,7 +560,7 @@ export class CollectionResponseAddressRelationshipsData extends CollectionRespon
   constructor(data: Partial<CollectionResponseAddressRelationshipsData> = {}) {
     super(data);
     if (data.items) {
-      this.items = data.items.map(item => new AddressPagingItem(item));
+      this.items = data.items.map((item) => new AddressPagingItem(item));
     }
   }
 }
@@ -610,7 +610,7 @@ export enum AcquisitionRelationships {
   acquirer = Relationships.acquirer,
   acquiree = Relationships.acquiree,
   images = Relationships.images,
-  news = Relationships.news
+  news = Relationships.news,
 }
 
 export class CollectionResponseAcquisitionRelationshipData extends CollectionResponseRelationshipData {
@@ -632,7 +632,7 @@ export class CollectionResponseAcquisitionRelationshipsData extends CollectionRe
   ) {
     super(data);
     if (data.items) {
-      this.items = data.items.map(item => new AcquisitionPagingItem(item));
+      this.items = data.items.map((item) => new AcquisitionPagingItem(item));
     }
   }
 }
@@ -686,7 +686,7 @@ export class CollectionResponseCategoryRelationshipsData extends CollectionRespo
   constructor(data: Partial<CollectionResponseCategoryRelationshipsData> = {}) {
     super(data);
     if (data.items) {
-      this.items = data.items.map(item => new CategoryPagingItem(item));
+      this.items = data.items.map((item) => new CategoryPagingItem(item));
     }
   }
 }
@@ -726,7 +726,7 @@ export class Degree {
 
 export enum DegreeRelationships {
   school = Relationships.school,
-  person = Relationships.person
+  person = Relationships.person,
 }
 
 export class CollectionResponseDegreeRelationshipsData extends CollectionResponseRelationshipsData {
@@ -735,7 +735,7 @@ export class CollectionResponseDegreeRelationshipsData extends CollectionRespons
   constructor(data: Partial<CollectionResponseDegreeRelationshipsData> = {}) {
     super(data);
     if (data.items) {
-      this.items = data.items.map(item => new DegreePagingItem(item));
+      this.items = data.items.map((item) => new DegreePagingItem(item));
     }
   }
 }
@@ -782,7 +782,7 @@ export enum FundRelationships {
   images = Relationships.images, // Image Note: In our beta release this will be an empty array.
   videos = Relationships.videos,
   news = Relationships.news,
-  websites = Relationships.websites
+  websites = Relationships.websites,
 }
 
 export class CollectionResponseFundRelationshipsData extends CollectionResponseRelationshipsData {
@@ -791,7 +791,7 @@ export class CollectionResponseFundRelationshipsData extends CollectionResponseR
   constructor(data: Partial<CollectionResponseFundRelationshipsData> = {}) {
     super(data);
     if (data.items) {
-      this.items = data.items.map(item => new FundPagingItem(item));
+      this.items = data.items.map((item) => new FundPagingItem(item));
     }
   }
 }
@@ -855,7 +855,7 @@ export enum FundingRoundRelationships {
   /** @deprecated */
   videos = Relationships.videos,
   news = Relationships.news,
-  websites = Relationships.websites
+  websites = Relationships.websites,
 }
 
 export class CollectionResponseFundingRoundRelationshipsData extends CollectionResponseRelationshipsData {
@@ -866,7 +866,7 @@ export class CollectionResponseFundingRoundRelationshipsData extends CollectionR
   ) {
     super(data);
     if (data.items) {
-      this.items = data.items.map(item => new FundingRoundPagingItem(item));
+      this.items = data.items.map((item) => new FundingRoundPagingItem(item));
     }
   }
 }
@@ -921,7 +921,7 @@ export class CollectionResponseImageRelationshipsData extends CollectionResponse
   constructor(data: Partial<CollectionResponseImageRelationshipsData> = {}) {
     super(data);
     if (data.items) {
-      this.items = data.items.map(item => new ImagePagingItem(item));
+      this.items = data.items.map((item) => new ImagePagingItem(item));
     }
   }
 }
@@ -964,7 +964,7 @@ export class Investment {
 export enum InvestmentRelationships {
   funding_round = Relationships.funding_round, // many-to-one FundingRound
   invested_in = Relationships.invested_in, // many-to-one Organization or Person
-  investors = Relationships.investors // one-to-many Organization or Person
+  investors = Relationships.investors, // one-to-many Organization or Person
 }
 
 export class CollectionResponseInvestmentRelationshipsData extends CollectionResponseRelationshipsData {
@@ -975,7 +975,7 @@ export class CollectionResponseInvestmentRelationshipsData extends CollectionRes
   ) {
     super(data);
     if (data.items) {
-      this.items = data.items.map(item => new InvestmentPagingItem(item));
+      this.items = data.items.map((item) => new InvestmentPagingItem(item));
     }
   }
 }
@@ -1045,7 +1045,7 @@ export enum IpoRelationships {
   /** @deprecated */
   videos = Relationships.videos,
   news = Relationships.news,
-  websites = Relationships.websites
+  websites = Relationships.websites,
 }
 
 export class CollectionResponseIpoRelationshipData extends CollectionResponseRelationshipData {
@@ -1092,7 +1092,7 @@ export class Job {
 
 export enum JobRelationships {
   person = Relationships.person,
-  organization = Relationships.organization
+  organization = Relationships.organization,
 }
 
 export class CollectionResponseJobRelationshipData extends CollectionResponseRelationshipData {
@@ -1110,7 +1110,7 @@ export class CollectionResponseJobRelationshipsData extends CollectionResponseRe
   constructor(data: Partial<CollectionResponseJobRelationshipsData> = {}) {
     super(data);
     if (data.items) {
-      this.items = data.items.map(item => new JobPagingItem(item));
+      this.items = data.items.map((item) => new JobPagingItem(item));
     }
   }
 }
@@ -1156,7 +1156,7 @@ export class Location {
 }
 
 export enum LocationRelationships {
-  parent_locations = Relationships.parent_locations
+  parent_locations = Relationships.parent_locations,
 }
 
 export class CollectionResponseLocationRelationshipsData extends CollectionResponseRelationshipsData {
@@ -1166,7 +1166,7 @@ export class CollectionResponseLocationRelationshipsData extends CollectionRespo
   constructor(data: Partial<CollectionResponseLocationRelationshipsData> = {}) {
     super(data);
     if (data.items) {
-      this.items = data.items.map(item => new LocationPagingItem(item));
+      this.items = data.items.map((item) => new LocationPagingItem(item));
     }
   }
 }
@@ -1205,7 +1205,7 @@ export enum OrganizationTypes {
   company = "company",
   investor = "investor",
   school = "school",
-  group = "group"
+  group = "group",
 }
 
 export class CollectionResponseNewsRelationshipsData extends CollectionResponseRelationshipsData {
@@ -1214,7 +1214,7 @@ export class CollectionResponseNewsRelationshipsData extends CollectionResponseR
   constructor(data: Partial<CollectionResponseNewsRelationshipsData> = {}) {
     super(data);
     if (data.items) {
-      this.items = data.items.map(item => new NewsPagingItem(item));
+      this.items = data.items.map((item) => new NewsPagingItem(item));
     }
   }
 }
@@ -1321,7 +1321,7 @@ export enum OrganizationRelationships {
   images = Relationships.images, // one-to-one Image
   /** @deprecated */
   videos = Relationships.videos, // one-to-many Note: This data has been deprecated so this will return an empty array
-  news = Relationships.news // many-to-many News
+  news = Relationships.news, // many-to-many News
 }
 
 export class CollectionResponseOrganizationRelationshipsData extends CollectionResponseRelationshipsData {
@@ -1332,7 +1332,7 @@ export class CollectionResponseOrganizationRelationshipsData extends CollectionR
   ) {
     super(data);
     if (data.items) {
-      this.items = data.items.map(item => new OrganizationPagingItem(item));
+      this.items = data.items.map((item) => new OrganizationPagingItem(item));
     }
   }
 }
@@ -1544,7 +1544,7 @@ export class OrganizationsSummaryPagedResponseData extends PagedResponseData {
     super(data);
     if (data.items) {
       this.items = data.items.map(
-        item => new OrganizationsSummaryPagingItem(item)
+        (item) => new OrganizationsSummaryPagingItem(item)
       );
     }
   }
@@ -1612,7 +1612,7 @@ export enum PersonRelationships {
   images = Relationships.images, // one-to-many Image
   /** @deprecated */
   videos = Relationships.videos, // one-to-many Note: This relationship has been deprecated and will return null results
-  news = Relationships.news // many-to-many News
+  news = Relationships.news, // many-to-many News
 }
 
 export class CollectionResponsePersonRelationshipsData extends CollectionResponseRelationshipsData {
@@ -1621,7 +1621,7 @@ export class CollectionResponsePersonRelationshipsData extends CollectionRespons
   constructor(data: Partial<CollectionResponsePersonRelationshipsData> = {}) {
     super(data);
     if (data.items) {
-      this.items = data.items.map(item => new PersonPagingItem(item));
+      this.items = data.items.map((item) => new PersonPagingItem(item));
     }
   }
 }
@@ -1779,7 +1779,7 @@ export class PeopleSummaryPagedResponseData extends PagedResponseData {
   constructor(data: Partial<PeopleSummaryPagedResponseData> = {}) {
     super(data);
     if (data.items) {
-      this.items = data.items.map(item => new PeopleSummaryPagingItem(item));
+      this.items = data.items.map((item) => new PeopleSummaryPagingItem(item));
     }
   }
 }
@@ -1815,7 +1815,7 @@ export class CollectionResponseWebsiteRelationshipsData extends CollectionRespon
   constructor(data: Partial<CollectionResponseWebsiteRelationshipsData> = {}) {
     super(data);
     if (data.items) {
-      this.items = data.items.map(item => new WebsitePagingItem(item));
+      this.items = data.items.map((item) => new WebsitePagingItem(item));
     }
   }
 }
@@ -1843,7 +1843,7 @@ export class CollectionResponseOrganizationOrPersonRelationshipsData extends Col
   ) {
     super(data);
     if (data.items) {
-      this.items = data.items.map(item => {
+      this.items = data.items.map((item) => {
         if (item.type === CollectionTypes.Organization) {
           // @ts-ignore - Oh mixed typings... /sigh
           return new OrganizationPagingItem(item);
@@ -1860,12 +1860,12 @@ export class CollectionResponseOrganizationOrPersonRelationshipsData extends Col
   public getOrganizations(): OrganizationPagingItem[] {
     // @ts-ignore - Oh mixed typings... /sigh
     return this.items.filter(
-      item => item.type === CollectionTypes.Organization
+      (item) => item.type === CollectionTypes.Organization
     );
   }
 
   public getPeople(): PersonPagingItem[] {
     // @ts-ignore - Oh mixed typings... /sigh
-    return this.items.filter(item => item.type === CollectionTypes.Person);
+    return this.items.filter((item) => item.type === CollectionTypes.Person);
   }
 }
