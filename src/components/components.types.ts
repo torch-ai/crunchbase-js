@@ -205,3 +205,40 @@ export enum CurrencyCode {
   ZWD = "ZWD", // Zimbabwe Dollar
   ZWL = "ZWL", //
 }
+
+export interface IDateWithPrecision {
+  /** A field that will contain date information up to a certain level of precision. E.g. month, day, etc. */
+  description: "none" | "year" | "month" | "day";
+  value: string;
+}
+
+export interface IDatetimeWithPrecision {
+  /** A field that will contain date information up to a certain level of precision. E.g. month, day, etc. */
+  description: "none" | "year" | "month" | "day" | "hour" | "minute" | "second";
+  value: string;
+}
+
+export interface IErrors {
+  value: string;
+}
+
+export interface IMoneyDecimal {
+  /** A field containing decimal data that represents some amount of money */
+  description: CurrencyCode;
+  value_usd?: number;
+  value: number;
+}
+
+export interface IMoney {
+  /** A field containing decimal data that represents some amount of money */
+  description: CurrencyCode;
+  value_usd?: number;
+  value: number;
+}
+
+export interface ILink {
+  /** An object representing both the url and some labeling text for that url */
+  description: string;
+  value: string;
+  label: string;
+}

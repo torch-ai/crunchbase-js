@@ -1,6 +1,5 @@
 import AbstractComponent from "../AbstractComponent";
 import { IAutocompleteParams, IAutocompleteResult } from "./Autocomplete.types";
-import { ISearchParams } from "../search/Search.types";
 
 export default class Autocomplete extends AbstractComponent {
   private static URI = "autocompletes";
