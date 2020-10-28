@@ -215,6 +215,24 @@ export enum CurrencyCode {
 
 export enum EntityDefId {
   Company = "company",
+  People = "people",
+  FundingRounds = "funding_rounds",
+  Acquisitions = "acquisitions",
+  Investments = "investments",
+  Events = "events",
+  PressReferences = "press_references",
+  Funds = "funds",
+  Event_appearances = "event_appearances",
+  Ipos = "ipos",
+  Ownerships = "ownerships",
+  Categories = "categories",
+  CategoryGroups = "category_groups",
+  Locations = "locations",
+  Jobs = "jobs",
+  KeyEmployeeChanges = "key_employee_changes",
+  Addresses = "addresses",
+  Degrees = "degrees",
+  Principals = "principals",
 }
 
 export enum FacetId {
