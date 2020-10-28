@@ -50,39 +50,44 @@ export interface IOrganizationResponse
 
 export interface IOrganizationCards
   extends IEntityResponseCardsFields<IOrganization> {
-  acquiree_acquisitions?: unknown;
-  acquirer_acquisitions?: unknown;
-  child_organizations?: unknown;
-  child_ownerships?: unknown;
-  event_appearances?: unknown;
-  founders?: unknown;
-  headquarters_address?: unknown;
-  investors?: unknown;
-  ipos?: unknown;
-  jobs?: unknown;
-  key_employee_changes?: unknown;
-  parent_organization?: unknown;
-  parent_ownership?: unknown;
-  participated_funding_rounds?: unknown;
-  participated_funds?: unknown;
-  participated_investments?: unknown;
-  press_references?: unknown;
-  raised_funding_rounds?: unknown;
-  raised_funds?: unknown;
-  raised_investments?: unknown;
+  acquiree_acquisitions?: IAcquisition[];
+  acquirer_acquisitions?: IAcquisition[];
+  child_organizations?: IOrganization[];
+  child_ownerships?: IOwnership[];
+  event_appearances?: IEventAppearance[];
+  founders?: IPerson[];
+  headquarters_address?: IAddress[];
+  investors?: IPrincipal[];
+  ipos?: IIpo[];
+  jobs?: IJob[];
+  key_employee_changes?: IKeyEmployeeChange[];
+  parent_organization?: IOrganization[];
+  parent_ownership?: IOwnership;
+  participated_funding_rounds?: IFundingRound[];
+  participated_funds?: IFund[];
+  participated_investments?: IInvestment[];
+  press_references?: IPressReference[];
+  raised_funding_rounds?: IFundingRound;
+  raised_funds?: IFund[];
+  raised_investments?: IInvestment[];
+}
+
+export interface IPersonResponse
+  extends IEntityResponse<IPerson, InterfaceKeys<IPersonCards>> {
+  cards?: IPersonCards;
 }
 
 export interface IPersonCards extends IEntityResponseCardsFields<IPerson> {
-  degrees: unknown;
-  event_appearances: unknown;
-  founded_organizations: unknown;
-  jobs: unknown;
-  participated_funding_rounds: unknown;
-  participated_funds: unknown;
-  participated_investments: unknown;
-  partner_funding_rounds: unknown;
-  partner_investments: unknown;
-  press_references: unknown;
-  primary_job: unknown;
-  primary_organization: unknown;
+  degrees: IDegree[];
+  event_appearances: IEventAppearance[];
+  founded_organizations: IOrganization[];
+  jobs: IJob[];
+  participated_funding_rounds: IFundingRound[];
+  participated_funds: IFund[];
+  participated_investments: IInvestment[];
+  partner_funding_rounds: IFundingRound[];
+  partner_investments: IInvestment[];
+  press_references: IPressReference[];
+  primary_job: IJob[];
+  primary_organization: IOrganization[];
 }

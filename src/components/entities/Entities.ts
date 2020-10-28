@@ -5,6 +5,7 @@ import {
   IEntityCardParams,
   IOrganizationCards,
   IOrganizationResponse,
+  IPersonResponse,
 } from "./Entities.types";
 
 export default class Entities extends AbstractComponent {
@@ -34,13 +35,13 @@ export default class Entities extends AbstractComponent {
 
   public async organizationCard(
     params: IEntityCardParams<IOrganization, InterfaceKeys<IOrganizationCards>>
-  ): Promise<IOrganization> {
+  ): Promise<IOrganizationResponse> {
     const uri =
       Entities.BASE +
       `organizations/${params.entity_id}/cards/${params.card_id}`;
     delete params.entity_id;
     delete params.card_id;
-    const { data } = await this.client.get<IOrganization>(uri, {
+    const { data } = await this.client.get<IOrganizationResponse>(uri, {
       params: Entities.formatCardParams(params),
     });
     return data;
@@ -48,10 +49,10 @@ export default class Entities extends AbstractComponent {
 
   public async person(
     params: IEntityParams<IPerson, InterfaceKeys<IOrganizationCards>>
-  ): Promise<IPerson> {
+  ): Promise<IPersonResponse> {
     const uri = Entities.BASE + `people/${params.entity_id}`;
     delete params.entity_id;
-    const { data } = await this.client.get<IPerson>(uri, {
+    const { data } = await this.client.get<IPersonResponse>(uri, {
       params: Entities.formatParams(params),
     });
     return data;
@@ -59,12 +60,12 @@ export default class Entities extends AbstractComponent {
 
   public async personCard(
     params: IEntityCardParams<IPerson, InterfaceKeys<IOrganizationCards>>
-  ): Promise<IPerson> {
+  ): Promise<IPersonResponse> {
     const uri =
       Entities.BASE + `people/${params.entity_id}/cards/${params.card_id}`;
     delete params.entity_id;
     delete params.card_id;
-    const { data } = await this.client.get<IPerson>(uri, {
+    const { data } = await this.client.get<IPersonResponse>(uri, {
       params: Entities.formatCardParams(params),
     });
     return data;
