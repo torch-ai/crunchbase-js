@@ -2,7 +2,7 @@ import axios, {
   AxiosError,
   AxiosInstance,
   AxiosRequestConfig,
-  AxiosResponse
+  AxiosResponse,
 } from "axios";
 import { TIMINGS } from "./constants";
 import {
@@ -13,7 +13,7 @@ import {
   OrganizationsSummaryResponse,
   PeopleSummaryResponse,
   PersonResponse,
-  TrustCode
+  TrustCode,
 } from "./CrunchbaseServiceTypes";
 
 export default class CrunchbaseService {
@@ -28,7 +28,7 @@ export default class CrunchbaseService {
   protected apiKey: string = "";
   protected client: AxiosInstance;
   protected options: IServiceOptions = {
-    onInvalidCredentials: () => {}
+    onInvalidCredentials: () => {},
   };
 
   public static formatDate(
@@ -48,7 +48,7 @@ export default class CrunchbaseService {
       case TrustCode.DayAndMonth:
         return date.toLocaleString("default", {
           month: format,
-          day: "numeric"
+          day: "numeric",
         });
       case TrustCode.Month:
         return date.toLocaleString("default", { month: format });
@@ -62,7 +62,7 @@ export default class CrunchbaseService {
         return date.toLocaleString("default", {
           year: format,
           month: format,
-          day: format
+          day: format,
         });
       default:
         return unknown;
@@ -74,7 +74,7 @@ export default class CrunchbaseService {
     this.setOptions(options);
     this.client = axios.create({
       baseURL: CrunchbaseService.SERVER_URI,
-      timeout: CrunchbaseService.DEFAULT_TIMEOUT
+      timeout: CrunchbaseService.DEFAULT_TIMEOUT,
     });
 
     // Bind to incoming requests
@@ -98,9 +98,7 @@ export default class CrunchbaseService {
     originalRequest: AxiosRequestConfig
   ): Promise<AxiosRequestConfig> {
     return new Promise((resolve, reject) => {
-      this.addAuthorization(originalRequest)
-        .then(resolve)
-        .catch(reject);
+      this.addAuthorization(originalRequest).then(resolve).catch(reject);
     });
   }
 
@@ -140,7 +138,7 @@ export default class CrunchbaseService {
   protected async addAuthorization(
     originalRequest: AxiosRequestConfig
   ): Promise<AxiosRequestConfig> {
-    return new Promise(async (resolve, reject) => {
+    return new Promise(async (resolve) => {
       originalRequest.params = originalRequest.params || {};
       originalRequest.params.user_key = this.apiKey;
       resolve(originalRequest);
@@ -157,9 +155,9 @@ export default class CrunchbaseService {
     return this.client
       .get(CrunchbaseService.ENDPOINT_ORGANIZATIONS, {
         params: options,
-        timeout: TIMINGS.organizationsTimeout
+        timeout: TIMINGS.organizationsTimeout,
       })
-      .then(response => new OrganizationsSummaryResponse(response.data));
+      .then((response) => new OrganizationsSummaryResponse(response.data));
   }
 
   /**
@@ -169,9 +167,9 @@ export default class CrunchbaseService {
   public getOrganization(permalink: string): Promise<OrganizationResponse> {
     return this.client
       .get([CrunchbaseService.ENDPOINT_ORGANIZATIONS, permalink].join("/"), {
-        timeout: TIMINGS.organizationTimeout
+        timeout: TIMINGS.organizationTimeout,
       })
-      .then(response => new OrganizationResponse(response.data));
+      .then((response) => new OrganizationResponse(response.data));
   }
 
   // @link https://data.crunchbase.com/reference#organizations-permalink-relationship_name
@@ -196,9 +194,9 @@ export default class CrunchbaseService {
   ): Promise<PeopleSummaryResponse> {
     return this.client
       .get(CrunchbaseService.ENDPOINT_PEOPLE, {
-        params: options
+        params: options,
       })
-      .then(response => new PeopleSummaryResponse(response.data));
+      .then((response) => new PeopleSummaryResponse(response.data));
   }
 
   /**
@@ -208,7 +206,7 @@ export default class CrunchbaseService {
   public getPerson(permalink: string): Promise<PersonResponse> {
     return this.client
       .get([CrunchbaseService.ENDPOINT_PEOPLE, permalink].join("/"))
-      .then(response => new PersonResponse(response.data));
+      .then((response) => new PersonResponse(response.data));
   }
 
   // TODO The api gives us urls like "first_page_url": "https://api.crunchbase.com/v3.1/organizations/tesla-motors/competitors". We have to figure out how to follow and type those.
