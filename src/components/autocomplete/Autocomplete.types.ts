@@ -2,7 +2,23 @@ import { IEntityIdentifier } from "../components.types";
 
 export interface IAutocompleteParams {
   query: string;
-  collection_ids?: string[];
+  collection_ids?: (
+    | "organizations"
+    | "people"
+    | "funding_rounds"
+    | "acquisitions"
+    | "investments"
+    | "events"
+    | "press_references"
+    | "funds"
+    | "event_appearances"
+    | "ipos"
+    | "ownerships"
+    | "categories"
+    | "category_groups"
+    | "locations"
+    | "jobs"
+  )[];
   limit?: number;
 }
 

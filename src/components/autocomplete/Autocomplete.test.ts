@@ -9,7 +9,9 @@ describe("service.autocomplete", () => {
   });
 
   it("should return", async (done) => {
-    const { entities } = await service.autocomplete.search("Microsoft");
+    const { entities } = await service.autocomplete.search("Microsoft", [
+      "organizations",
+    ]);
     expect(Array.isArray(entities)).toBeTruthy();
     entities.forEach((entity) => {
       expect(entity.short_description).toBeTruthy();
