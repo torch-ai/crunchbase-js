@@ -1,4 +1,4 @@
-import { getService } from "../../../tests/utils";
+import { expectIdentifier, getService } from "../../../tests/utils";
 import Search from "./Search";
 import { CurrencyCode } from "../components.types";
 
@@ -12,9 +12,7 @@ describe("service.search", () => {
   // Based on https://app.swaggerhub.com/apis-docs/Crunchbase/crunchbase-enterprise_api/1.0.3#/Search/post_searches_organizations
   it("should search organizations", async (done) => {
     const limit = 4;
-    const results = await service.search.organization({
-      // after_id: "",
-      // before_id: "",
+    const results = await service.search.organizations({
       field_ids: ["identifier", "short_description"],
       order: [
         {
@@ -63,6 +61,49 @@ describe("service.search", () => {
       expect(properties.identifier.permalink).toBeTruthy();
       expect(properties.identifier.value).toBeTruthy();
       expect(properties.short_description).toBeTruthy();
+    });
+
+    done();
+  });
+
+  it("should search people", async (done) => {
+    const limit = 4;
+    const results = await service.search.people({
+      field_ids: ["name", "identifier", "short_description"],
+      order: [
+        {
+          field_id: "rank_person",
+          sort: "asc",
+        },
+      ],
+      query: [
+        {
+          type: "predicate",
+          field_id: "num_exits",
+          operator_id: "between",
+          values: [1, 3],
+        },
+        {
+          type: "predicate",
+          field_id: "location_identifiers",
+          operator_id: "includes",
+          values: ["6106f5dc-823e-5da8-40d7-51612c0b2c4e"],
+        },
+      ],
+      limit,
+    });
+
+    expect(results.count).toBeGreaterThanOrEqual(0);
+    expect(Array.isArray(results.entities)).toBeTruthy();
+    expect(results.entities.length).toBe(limit);
+    results.entities.forEach(({ uuid, properties }) => {
+      expect(uuid).toBeTruthy();
+      expectIdentifier(properties);
+      expect(properties.identifier.uuid).toBe(uuid);
+      expect(properties.identifier.permalink).toBeTruthy();
+      expect(properties.identifier.value).toBeTruthy();
+      expect(properties.short_description).toBeTruthy();
+      expect(properties.name).toBeTruthy();
     });
 
     done();

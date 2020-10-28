@@ -215,24 +215,24 @@ export enum CurrencyCode {
 
 export enum EntityDefId {
   Company = "company",
-  People = "people",
-  FundingRounds = "funding_rounds",
-  Acquisitions = "acquisitions",
-  Investments = "investments",
-  Events = "events",
-  PressReferences = "press_references",
-  Funds = "funds",
-  Event_appearances = "event_appearances",
-  Ipos = "ipos",
-  Ownerships = "ownerships",
-  Categories = "categories",
-  CategoryGroups = "category_groups",
-  Locations = "locations",
-  Jobs = "jobs",
-  KeyEmployeeChanges = "key_employee_changes",
-  Addresses = "addresses",
-  Degrees = "degrees",
-  Principals = "principals",
+  Person = "person",
+  FundingRound = "funding_round",
+  Acquisition = "acquisition",
+  Investment = "investment",
+  Event = "event",
+  PressReference = "press_reference",
+  Fund = "fund",
+  Event_appearance = "event_appearance",
+  Ipo = "ipo",
+  Ownership = "ownership",
+  Category = "category",
+  CategoryGroup = "category_group",
+  Location = "location",
+  Job = "job",
+  KeyEmployeeChange = "key_employee_change",
+  Address = "address",
+  Degree = "degree",
+  Principal = "principal",
 }
 
 export enum FacetId {
@@ -281,6 +281,40 @@ export enum FundingType {
   Undisclosed = "undisclosed",
 }
 
+export enum Gender {
+  Agender = "agender",
+  Androgyne = "androgyne",
+  Androgynous = "androgynous",
+  BiGender = "bigender",
+  Female = "female",
+  FemaleToMale = "ftm",
+  GenderFluid = "gender_fluid",
+  GenderNonconforming = "gender_nonconforming",
+  GenderQuestioning = "gender_questioning",
+  GenderVariant = "gender_variant",
+  GenderQueer = "genderqueer",
+  Male = "male",
+  MaleToFemale = "mtf",
+  Neutrois = "neutrois",
+  NonBinary = "non_binary",
+  PreferNotToIdentify = "not_provided",
+  Other = "other",
+  Pangender = "pangender",
+  Transfeminine = "transfeminine",
+  TransgenderFemale = "transgender_female",
+  TransgenderMale = "transgender_male",
+  TransgenderMan = "transgender_man",
+  TransgenderPerson = "transgender_person",
+  TransgenderWoman = "transgender_woman",
+  Transmasculine = "transmasculine",
+  TranssexualFemale = "transsexual_female",
+  TranssexualMale = "transsexual_male",
+  TranssexualMan = "transsexual_man",
+  TranssexualPerson = "transsexual_person",
+  TranssexualWoman = "transsexual_woman",
+  TwoSpirit = "two_spirit",
+}
+
 export enum HubTags {
   CrunchbaseVentureProgram = "cbvp",
   EmergingUnicorn = "emerging_unicorn",
@@ -316,7 +350,9 @@ export enum InvestorType {
   GovernmentOffice = "government_office",
   HedgeFund = "hedge_fund",
   Incubator = "incubator",
+  IndividualOrAngel = "angel",
   InvestmentBank = "investment_bank",
+  InvestmentPartner = "investment_partner",
   MicroVC = "micro_vc",
   PensionFunds = "pension_funds",
   PrivateEquityFirm = "private_equity_firm",
@@ -632,7 +668,140 @@ export interface IMoney {
   value: number;
 }
 
-export interface IOrganization {
+export interface ICreated {
+  /**
+   * Searchable: Yes
+   * Search Operators: between, blank, eq, gte, lte
+   */
+  created_at?: dateTime;
+}
+
+export interface IFacebook {
+  /**
+   * Link to a Person's Facebook page
+   * Field Type: link
+   * Searchable: No
+   */
+  facebook?: ILink;
+}
+
+export interface IIdentifier {
+  /**
+   * Name of the Entity
+   * Searchable: Yes
+   * Search Operators: blank, contains, eq, includes, not_contains, not_eq, not_includes, starts
+   */
+  identifier: IEntityIdentifier;
+}
+
+export interface IImage {
+  /**
+   * maxLength: 255
+   * The profile image of the entity on Crunchbase
+   * Searchable: No
+   */
+  image_id?: imageId;
+  /**
+   * maxLength: 8192
+   * The cloudinary url of the profile image
+   * Searchable: No
+   */
+  image_url?: string;
+}
+
+export interface ILinkedIn {
+  /**
+   * Link to a Entity's LinkedIn page
+   * Field Type: link
+   * Searchable: No
+   */
+  linkedin?: ILink;
+}
+
+export interface IPermalink {
+  /**
+   * maxLength: 255
+   * Searchable: No
+   */
+  permalink?: permalink;
+  /**
+   * maxItems: 255
+   * These are the alternative aliases to the primary permalink of the Entity
+   * Searchable: Yes
+   * Search Operators: blank, includes, includes_all, not_includes, not_includes_all
+   * maxLength: 255
+   */
+  permalink_aliases?: string[];
+}
+
+export interface IShortDescription {
+  /**
+   * maxLength: 8192
+   * Text of Entity Description
+   * Field Type: text_long
+   * Searchable: Yes
+   * Search Operators: blank, contains, not_contains
+   */
+  short_description?: string;
+}
+
+export interface ITwitter {
+  /**
+   * Link to a Entity's Twitter page
+   * Field Type: link
+   * Searchable: No
+   */
+  twitter?: ILink;
+}
+
+export interface IUpdated {
+  /**
+   * Searchable: Yes
+   * Search Operators: between, blank, eq, gte, lte
+   */
+  updated_at?: dateTime;
+}
+
+export interface IWebsite {
+  /**
+   * Link to a Entity's website. note: website_url has replaced this field; this field will be deprecated in the near future
+   * Searchable: No
+   * @deprecated
+   */
+  website?: ILink;
+}
+
+export interface IUUID {
+  /**
+   * Searchable: Yes
+   * Search Operators: blank, eq, includes
+   */
+  uuid?: uuid;
+}
+
+export interface IWebsiteUrl {
+  /**
+   * maxLength: 8192
+   * Link to a Entity's website
+   * Searchable: Yes
+   * Search Operators: domain_blank, domain_eq, domain_includes, not_domain_eq, not_domain_includes
+   */
+  website_url?: url;
+}
+
+export interface IOrganization
+  extends IIdentifier,
+    ICreated,
+    IUpdated,
+    IFacebook,
+    IImage,
+    ILinkedIn,
+    IPermalink,
+    IShortDescription,
+    ITwitter,
+    IUUID,
+    IWebsite,
+    IWebsiteUrl {
   /**
    * Name of the organization that made the acquisition
    * Searchable: Yes
@@ -686,11 +855,6 @@ export interface IOrganization {
    */
   contact_email?: string;
   /**
-   * Searchable: Yes
-   * Search Operators: between, blank, eq, gte, lte
-   */
-  created_at?: dateTime;
-  /**
    * The date when the Organization removed its stock from the stock exchange.
    * Searchable: Yes
    * Search Operators: between, blank, eq, gte, lte
@@ -739,11 +903,6 @@ export interface IOrganization {
    */
   exited_on?: IDateWithPrecision;
   /**
-   * Link to Organization's Facebook page
-   * Searchable: No
-   */
-  facebook?: ILink;
-  /**
    * Searchable: Yes
    * Search Operators: blank, includes, includes_all, not_includes, not_includes_all
    */
@@ -785,24 +944,6 @@ export interface IOrganization {
    */
   hub_tags?: HubTags[];
   /**
-   * Name of the Organization
-   * Searchable: Yes
-   * Search Operators: blank, contains, eq, includes, not_contains, not_eq, not_includes, starts
-   */
-  identifier: IEntityIdentifier;
-  /**
-   * maxLength: 255
-   * The profile image of the organization on Crunchbase
-   * Searchable: No
-   */
-  image_id?: imageId;
-  /**
-   * maxLength: 8192
-   * The cloudinary url of the profile image
-   * Searchable: No
-   */
-  image_url?: string;
-  /**
    * The top 5 investors with investments in this company, ordered by Crunchbase Rank
    * Searchable: Yes
    * Search Operators: blank, includes, includes_all, not_includes, not_includes_all
@@ -819,7 +960,28 @@ export interface IOrganization {
    * Searchable: Yes
    * Search Operators: blank, includes, includes_all, not_includes, not_includes_all
    */
-  investor_type?: InvestorType[];
+  investor_type?: (
+    | InvestorType.Accelerator
+    | InvestorType.AngelGroup
+    | InvestorType.CoWorkingSpace
+    | InvestorType.CorporateVentureCapital
+    | InvestorType.EntrepreneurshipProgram
+    | InvestorType.FamilyInvestmentOffice
+    | InvestorType.FundOfFunds
+    | InvestorType.GovernmentOffice
+    | InvestorType.HedgeFund
+    | InvestorType.Incubator
+    | InvestorType.InvestmentBank
+    | InvestorType.MicroVC
+    | InvestorType.PensionFunds
+    | InvestorType.PrivateEquityFirm
+    | InvestorType.SecondaryPurchaser
+    | InvestorType.StartupCompetition
+    | InvestorType.Syndicate
+    | InvestorType.UniversityProgram
+    | InvestorType.VentureCapital
+    | InvestorType.VentureDebt
+  )[];
   /**
    * The current public status of the Organization
    * Searchable: Yes
@@ -875,11 +1037,6 @@ export interface IOrganization {
    * Searchable: No
    */
   legal_name?: string;
-  /**
-   * Link to Organization's LinkedIn page
-   * Searchable: No
-   */
-  linkedin?: ILink;
   /**
    * maxLength: 8192
    * Stock ticker symbol (e.g. AAPL, FB, TWTR)
@@ -1066,26 +1223,16 @@ export interface IOrganization {
    * Searchable: Yes
    * Search Operators: blank, eq, includes, not_eq, not_includes
    */
-  override_layout_id?: LayoutId;
+  override_layout_id?:
+    | LayoutId.InvestorLayout
+    | LayoutId.SchoolLayout
+    | LayoutId.DefaultLayout;
   /**
    * This is the parent Organization of the sub-organization
    * Searchable: Yes
    * Search Operators: blank, contains, eq, includes, not_contains, not_eq, not_includes, starts
    */
   owner_identifier?: IEntityIdentifier;
-  /**
-   * maxLength: 255
-   * Searchable: No
-   */
-  permalink?: permalink;
-  /**
-   * maxItems: 255
-   * These are the alternative aliases to the primary permalink of the Organization
-   * Searchable: Yes
-   * Search Operators: blank, includes, includes_all, not_includes, not_includes_all
-   * maxLength: 255
-   */
-  permalink_aliases?: string[];
   /**
    * maxLength: 8192
    * Organization's general phone number
@@ -1180,13 +1327,6 @@ export interface IOrganization {
    */
   school_type?: SchoolType;
   /**
-   * maxLength: 8192
-   * Text of Organization Description, Industries, and Industry Groups
-   * Searchable: Yes
-   * Search Operators: blank, contains, not_contains
-   */
-  short_description?: string;
-  /**
    * Status of Organization e.g. Operating, Closed, Acquired, IPO
    * Searchable: Yes
    * Search Operators: blank, eq, includes, not_eq, not_includes
@@ -1205,23 +1345,6 @@ export interface IOrganization {
    */
   stock_symbol?: IEntityIdentifier;
   /**
-   * Link to Organization's Twitter page
-   * Searchable: No
-   */
-  twitter?: ILink;
-  /**
-   * Field Type: datetime
-   * Searchable: Yes
-   * Search Operators: between, blank, eq, gte, lte
-   */
-  updated_at?: dateTime;
-  /**
-   * Field Type: uuid
-   * Searchable: Yes
-   * Search Operators: blank, eq, includes
-   */
-  uuid?: uuid;
-  /**
    * Latest post money valuation of organization
    * Field Type: money
    * Searchable: Yes
@@ -1235,23 +1358,283 @@ export interface IOrganization {
    */
   valuation_date?: date;
   /**
-   * Link to homepage. note: website_url has replaced this field; this field will be deprecated in the near future
-   * Searchable: No
-   * @deprecated
-   */
-  website?: ILink;
-  /**
-   * maxLength: 8192
-   * Link to homepage
-   * Searchable: Yes
-   * Search Operators: domain_blank, domain_eq, domain_includes, not_domain_eq, not_domain_includes
-   */
-  website_url?: url;
-  /**
    * The date when the Organization went public
    * Field Type: date
    * Searchable: Yes
    * Search Operators: between, blank, eq, gte, lte
    */
   went_public_on?: date;
+}
+
+export interface IPerson
+  extends IIdentifier,
+    ICreated,
+    IUpdated,
+    IFacebook,
+    IImage,
+    ILinkedIn,
+    IPermalink,
+    IShortDescription,
+    ITwitter,
+    IUUID,
+    IWebsite,
+    IWebsiteUrl {
+  /**
+   * maxItems: 255
+   * Alternate or previous names for the individual
+   * Searchable: Yes
+   * Search Operators: blank, contains, eq, not_contains, not_eq, starts
+   * maxLength: 255
+   */
+  aliases?: string[];
+  /**
+   * The birthdate of the person
+   * Searchable: Yes
+   * Search Operators: between, blank, eq, gte, lte
+   */
+  born_on?: date;
+  /**
+   * maxLength: 8192
+   * Text from a Person's biography
+   * Searchable: Yes
+   * Search Operators: blank, contains, not_contains
+   */
+  description?: string;
+  /**
+   * The date when a person died
+   * Searchable: Yes
+   * Search Operators: between, blank, eq, gte, lte
+   */
+  died_on?: date;
+  /**
+   * Searchable: Yes
+   * Search Operators: blank, eq, includes, not_eq, not_includes
+   */
+  entity_def_id: EntityDefId.Person;
+  /**
+   * Searchable: Yes
+   * Search Operators: blank, includes, includes_all, not_includes, not_includes_all
+   */
+  facet_ids?: [FacetId.Investor];
+  /**
+   * First name of a Person
+   * Searchable: Yes
+   * Search Operators: blank, contains, eq, not_contains, not_eq, starts
+   */
+  first_name?: string;
+  /**
+   * A Person's gender
+   * Searchable: Yes
+   * Search Operators: blank, eq, includes, not_eq, not_includes
+   */
+  gender?: Gender;
+  /**
+   * This describes the stage of investor this person is (e.g. Angel, Fund of Funds, Venture Capital)
+   * Searchable: Yes
+   * Search Operators: blank, includes, includes_all, not_includes, not_includes_all
+   */
+  investor_stage?: InvestorStage[];
+  /**
+   * This describes the type of investor the person is (e.g. Angel, Fund of Funds, Venture Capital)
+   * Searchable: Yes
+   * Search Operators: blank, includes, includes_all, not_includes, not_includes_all
+   */
+  investor_type?:
+    | InvestorType.IndividualOrAngel
+    | InvestorType.InvestmentPartner;
+  /**
+   * Last name of a Person
+   * Searchable: Yes
+   * Search Operators: blank, contains, eq, not_contains, not_eq, starts
+   */
+  last_name?: string;
+  /**
+   * This is the auto-generated layout for the profile
+   * Searchable: Yes
+   * Search Operators: blank, eq, includes, not_eq, not_includes
+   * Possible values are:
+   */
+  layout_id?: LayoutId.InvestorLayout;
+  /**
+   * Where the person is located (e.g. San Francisco Bay Area, Silicon Valley)
+   * Searchable: Yes
+   * Search Operators: blank, includes, includes_all, not_includes, not_includes_all
+   */
+  location_group_identifiers?: IEntityIdentifier[];
+  /**
+   * Where the person is located (e.g. Europe, Menlo Park, China)
+   * Searchable: Yes
+   * Search Operators: blank, includes, includes_all, not_includes, not_includes_all
+   */
+  location_identifiers?: ILocationIdentifier[];
+  /**
+   * Middle name of a Person
+   * Searchable: No
+   */
+  middle_name?: string;
+  /**
+   * Full name of a Person
+   * Searchable: No
+   */
+  name?: string;
+  /**
+   * Number of news articles that reference the Person
+   * Field Type: integer
+   * Searchable: Yes
+   * Search Operators: between, blank, eq, gt, gte, lt, lte, not_eq
+   */
+  num_articles?: number;
+  /**
+   * Total number of current Advisors and Board roles the person has
+   * Field Type: integer
+   * Searchable: Yes
+   * Search Operators: between, blank, eq, gt, gte, lt, lte, not_eq
+   */
+  num_current_advisor_jobs?: number;
+  /**
+   * Total number of current Jobs the person has
+   * Field Type: integer
+   * Searchable: Yes
+   * Search Operators: between, blank, eq, gt, gte, lt, lte, not_eq
+   */
+  num_current_jobs?: number;
+  /**
+   * Total number of diversity investments made by an investor
+   * Field Type: integer
+   * Searchable: Yes
+   * Search Operators: between, blank, eq, gt, gte, lt, lte, not_eq
+   */
+  num_diversity_spotlight_investments?: number;
+  /**
+   * Total number of events the individual appeared in
+   * Field Type: integer
+   * Searchable: Yes
+   * Search Operators: between, blank, eq, gt, gte, lt, lte, not_eq
+   */
+  num_event_appearances?: number;
+  /**
+   * Total number of Exits
+   * Field Type: integer
+   * Searchable: Yes
+   * Search Operators: between, blank, eq, gt, gte, lt, lte, not_eq
+   */
+  num_exits?: number;
+  /**
+   * Total number of Exits (IPO)
+   * Field Type: integer
+   * Searchable: Yes
+   * Search Operators: between, blank, eq, gt, gte, lt, lte, not_eq
+   */
+  num_exits_ipo?: number;
+  /**
+   * Number of Organizations that the person founded
+   * Field Type: integer
+   * Searchable: Yes
+   * Search Operators: between, blank, eq, gt, gte, lt, lte, not_eq
+   */
+  num_founded_organizations?: number;
+  /**
+   * Number of Investments the Individual has participated in
+   * Field Type: integer
+   * Searchable: Yes
+   * Search Operators: between, blank, eq, gt, gte, lt, lte, not_eq
+   */
+  num_investments?: number;
+  /**
+   * Field Type: integer
+   * Searchable: Yes
+   * Search Operators: between, blank, eq, gt, gte, lt, lte, not_eq
+   */
+  num_jobs?: number;
+  /**
+   * Number of Investments led by the Individual
+   * Field Type: integer
+   * Searchable: Yes
+   * Search Operators: between, blank, eq, gt, gte, lt, lte, not_eq
+   */
+  num_lead_investments?: number;
+  /**
+   * Number of Investments the Individual has partnered in
+   * Field Type: integer
+   * Searchable: Yes
+   * Search Operators: between, blank, eq, gt, gte, lt, lte, not_eq
+   */
+  num_partner_investments?: number;
+  /**
+   * Total number of past Board and Advisor roles the person has
+   * Field Type: integer
+   * Searchable: Yes
+   * Search Operators: between, blank, eq, gt, gte, lt, lte, not_eq
+   */
+  num_past_advisor_jobs?: number;
+  /**
+   * Total number of past Jobs the person has
+   * Field Type: integer
+   * Searchable: Yes
+   * Search Operators: between, blank, eq, gt, gte, lt, lte, not_eq
+   */
+  num_past_jobs?: number;
+  /**
+   * Number of portfolio companies associated to the Person
+   * Field Type: integer
+   * Searchable: Yes
+   * Search Operators: between, blank, eq, gt, gte, lt, lte, not_eq
+   */
+  num_portfolio_organizations?: number;
+  /**
+   * Override the layout of the Entity Profile
+   * Searchable: Yes
+   * Search Operators: blank, eq, includes, not_eq, not_includes
+   */
+  override_layout_id?: LayoutId.InvestorLayout | LayoutId.DefaultLayout;
+  /**
+   * maxLength: 255
+   * The person's primary job title
+   * Field Type: text_short
+   * Searchable: Yes
+   * Search Operators: blank, contains, eq, not_contains, not_eq, starts
+   */
+  primary_job_title?: string;
+  /**
+   * The organization associated to the person's primary job
+   * Field Type: identifier
+   * Searchable: Yes
+   * Search Operators: blank, contains, eq, includes, not_contains, not_eq, not_includes, starts
+   */
+  primary_organization?: IEntityIdentifier;
+  /**
+   * Movement in Rank over the last 30 days using a score from -10 to 10
+   * Field Type: decimal
+   * Searchable: Yes
+   * Search Operators: between, blank, eq, gt, gte, lt, lte, not_eq
+   */
+  rank_delta_d30?: number;
+  /**
+   * Movement in Rank over the last 7 days using a score from -10 to 10
+   * Field Type: decimal
+   * Searchable: Yes
+   * Search Operators: between, blank, eq, gt, gte, lt, lte, not_eq
+   */
+  rank_delta_d7?: number;
+  /**
+   * Movement in Rank over the last 90 days using a score from -10 to 10
+   * Field Type: decimal
+   * Searchable: Yes
+   * Search Operators: between, blank, eq, gt, gte, lt, lte, not_eq
+   */
+  rank_delta_d90?: number;
+  /**
+   * Algorithmic rank assigned to the top 100,000 most active People
+   * Field Type: integer
+   * Searchable: Yes
+   * Search Operators: between, blank, eq, gt, gte, lt, lte, not_eq
+   */
+  rank_person?: number;
+  /**
+   * Algorithmic rank assigned to the top 100,000 most active Organizations and People
+   * Field Type: integer
+   * Searchable: Yes
+   * Search Operators: between, blank, eq, gt, gte, lt, lte, not_eq
+   */
+  rank_principal?: number;
 }

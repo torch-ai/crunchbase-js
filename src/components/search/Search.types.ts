@@ -1,6 +1,8 @@
 import {
   CurrencyCode,
+  IIdentifier,
   InterfaceKeys,
+  IOrganization,
   Operator,
   Order,
   uuid,
@@ -31,7 +33,7 @@ interface IPredicate<T> {
   type: "predicate";
   field_id: InterfaceKeys<T> | string;
   operator_id: Operator;
-  values?: (boolean | string | ISearchParamsQueryCurrencyValue)[];
+  values?: (boolean | string | number | ISearchParamsQueryCurrencyValue)[];
 }
 
 interface ISearchParamsQueryCurrencyValue {
