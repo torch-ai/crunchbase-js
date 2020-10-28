@@ -933,7 +933,7 @@ export class ImagePagingItem extends ResponsePagingItem {
     super(data);
     if (data.properties) {
       this.properties = new Image(data.properties);
-      // Append the type and uuid properties to the properties for class data point consitency
+      // Append the type and uuid properties to the properties for class data point consistency
       this.properties.type = data.type;
       this.properties.uuid = data.uuid;
     }
@@ -988,7 +988,7 @@ export class InvestmentPagingItem extends ResponsePagingItem {
     super(data);
     if (data.properties) {
       this.properties = new Investment(data.properties);
-      // Append the type and uuid properties to the properties for class data point consitency
+      // Append the type and uuid properties to the properties for class data point consistency
       this.properties.type = data.type;
       this.properties.uuid = data.uuid;
     }
@@ -1123,7 +1123,7 @@ export class JobPagingItem extends ResponsePagingItem {
     super(data);
     if (data.properties) {
       this.properties = new Job(data.properties);
-      // Append the type and uuid properties to the properties for class data point consitency
+      // Append the type and uuid properties to the properties for class data point consistency
       this.properties.type = data.type;
       this.properties.uuid = data.uuid;
     }
