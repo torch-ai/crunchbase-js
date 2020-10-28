@@ -1,4 +1,4 @@
-import {
+import Service, {
   Acquisition,
   Address,
   Category,
@@ -18,6 +18,24 @@ import {
   ResponsePagingData,
   Website,
 } from "../src";
+
+/**
+ * An instance of the service
+ */
+
+let service: Service;
+const onInvalidCredentials = jest.fn(() => {});
+export const getService = (): Service => {
+  if (service) {
+    return service;
+  }
+
+  service = new Service(process.env.API_KEY, {
+    onInvalidCredentials,
+  });
+
+  return service;
+};
 
 export const expectMetaData = (metadata: ResponseMetaData) => {
   expect(metadata).toBeInstanceOf(ResponseMetaData);
