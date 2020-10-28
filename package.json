@@ -10,13 +10,13 @@
     "dist"
   ],
   "scripts": {
-    "test": "jest",
-    "test:watch": "jest --watch",
     "build": "npm run-script build:clean && npm run-script build:rollup",
     "build:clean": "rimraf dist/*",
     "build:rollup": "rollup -c",
+    "prepublishOnly": "npm t && npm run-script build",
     "start": "npm run-script build:clean && rollup -cw",
-    "prepare": "npm t && npm run-script build"
+    "test": "jest",
+    "test:watch": "jest --watch"
   },
   "repository": {
     "type": "git",
