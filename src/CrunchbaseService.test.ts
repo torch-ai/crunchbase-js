@@ -1,4 +1,3 @@
-import dotenv from "dotenv";
 import CrunchbaseService from "./CrunchbaseService";
 import {
   Acquisition,
@@ -70,7 +69,7 @@ import {
   ResponsePagingData,
   TrustCode,
   Website,
-  WebsitePagingItem
+  WebsitePagingItem,
 } from "./CrunchbaseServiceTypes";
 import { TIMINGS } from "./constants";
 
@@ -269,9 +268,8 @@ const expectWebsite = (website: Website) => {
  * The tests
  */
 describe("crunchbaseService", () => {
-  dotenv.config();
   const crunchbaseService = new CrunchbaseService(process.env.API_KEY, {
-    onInvalidCredentials: onInvalidCredentials
+    onInvalidCredentials: onInvalidCredentials,
   });
 
   it("should format trusted dates", () => {
@@ -359,9 +357,9 @@ describe("crunchbaseService", () => {
   //     done();
   // });
 
-  it("should return an organizations response", async done => {
+  it("should return an organizations response", async (done) => {
     const response = await crunchbaseService.getOrganizations({
-      name: "Tesla"
+      name: "Tesla",
     });
 
     expect(response).toBeInstanceOf(OrganizationsSummaryResponse);
@@ -383,9 +381,9 @@ describe("crunchbaseService", () => {
 
   it(
     "should return an organization response",
-    async done => {
+    async (done) => {
       const summaryResponse = await crunchbaseService.getOrganizations({
-        name: "Tesla"
+        name: "Tesla",
       });
 
       const response = await crunchbaseService.getOrganization(
@@ -689,9 +687,9 @@ describe("crunchbaseService", () => {
     TIMINGS.organizationsTimeout + TIMINGS.organizationTimeout
   );
 
-  it("should return a people response", async done => {
+  it("should return a people response", async (done) => {
     const response = await crunchbaseService.getPeople({
-      name: "Buffet"
+      name: "Buffet",
     });
 
     expect(response).toBeInstanceOf(PeopleSummaryResponse);
@@ -716,9 +714,9 @@ describe("crunchbaseService", () => {
     done();
   });
 
-  it("should return an person response", async done => {
+  it("should return an person response", async (done) => {
     const summaryResponse = await crunchbaseService.getPeople({
-      name: "Buffet"
+      name: "Buffet",
     });
 
     const response = await crunchbaseService.getPerson(
