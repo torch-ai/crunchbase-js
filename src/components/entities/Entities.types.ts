@@ -14,6 +14,7 @@ import { IPressReference } from "./types/PressReference.types";
 import { IEventAppearance } from "./types/EventAppearance.types";
 import { IIpo } from "./types/Ipo.types";
 import { IOwnership } from "./types/Ownership.types";
+import { IJob } from "./types/Job.types";
 
 /**
  * UUID or permalink of desired entity
