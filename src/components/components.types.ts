@@ -836,6 +836,21 @@ export interface IShortDescription {
   short_description?: string;
 }
 
+export interface IStockExchange {
+  /**
+   * Stock exchange where the Organization is listed (e.g. NYSE, NASDAQ)
+   * Searchable: Yes
+   * Search Operators: blank, eq, includes, not_eq, not_includes
+   */
+  stock_exchange_symbol?: StockExchangeSymbol;
+  /**
+   * Stock ticker symbol (e.g. AAPL, FB, TWTR)
+   * Searchable: Yes
+   * Search Operators: blank, contains, eq, includes, not_contains, not_eq, not_includes, starts
+   */
+  stock_symbol?: IEntityIdentifier;
+}
+
 export interface ITwitter {
   /**
    * Link to a Entity's Twitter page

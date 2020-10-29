@@ -23,6 +23,7 @@ import {
   IPermalink,
   IPOStatus,
   IShortDescription,
+  IStockExchange,
   ITwitter,
   IUpdated,
   IUUID,
@@ -37,7 +38,6 @@ import {
   SchoolProgram,
   SchoolType,
   Status,
-  StockExchangeSymbol,
 } from "../../components.types";
 
 export interface IOrganization
@@ -53,6 +53,7 @@ export interface IOrganization
     IName,
     IPermalink,
     IShortDescription,
+    IStockExchange,
     ITwitter,
     IUUID,
     IWebsite,
@@ -486,7 +487,6 @@ export interface IOrganization
    * Search Operators: between, blank, eq, gt, gte, lt, lte, not_eq
    */
   program_duration?: number;
-  //
   /**
    * The type of Accelerator Program (e.g. On-Site, Online)
    * Searchable: Yes
@@ -500,7 +500,6 @@ export interface IOrganization
    * Search Operators: between, blank, eq, gt, gte, lt, lte, not_eq
    */
   rank_delta_d30?: number;
-  //
   /**
    * Movement in Rank over the last 7 days using a score from -10 to 10
    * Field Type: decimal
@@ -508,7 +507,6 @@ export interface IOrganization
    * Search Operators: between, blank, eq, gt, gte, lt, lte, not_eq
    */
   rank_delta_d7?: number;
-  //
   /**
    * Movement in Rank over the last 90 days using a score from -10 to 10
    * Field Type: decimal
@@ -516,7 +514,6 @@ export interface IOrganization
    * Search Operators: between, blank, eq, gt, gte, lt, lte, not_eq
    */
   rank_delta_d90?: number;
-  //
   /**
    * Algorithmic rank assigned to the top 100,000 most active Organizations
    * Field Type: integer
@@ -524,7 +521,6 @@ export interface IOrganization
    * Search Operators: between, blank, eq, gt, gte, lt, lte, not_eq
    */
   rank_org?: number;
-  //
   /**
    * Algorithmic rank assigned to the top 100,000 most active Organizations and People
    * Field Type: integer
@@ -562,18 +558,6 @@ export interface IOrganization
    * Search Operators: blank, eq, includes, not_eq, not_includes
    */
   status?: Status.Closed | Status.IPO | Status.Operating | Status.WasAcquired;
-  /**
-   * Stock exchange where the Organization is listed e.g. NYSE, NASDAQ
-   * Searchable: Yes
-   * Search Operators: blank, eq, includes, not_eq, not_includes
-   */
-  stock_exchange_symbol?: StockExchangeSymbol;
-  /**
-   * Stock ticker symbol (e.g. AAPL, FB, TWTR)
-   * Searchable: Yes
-   * Search Operators: blank, contains, eq, includes, not_contains, not_eq, not_includes, starts
-   */
-  stock_symbol?: IEntityIdentifier;
   /**
    * Latest post money valuation of organization
    * Field Type: money
