@@ -15,6 +15,7 @@ import { IEventAppearance } from "./types/EventAppearance.types";
 import { IIpo } from "./types/Ipo.types";
 import { IOwnership } from "./types/Ownership.types";
 import { IJob } from "./types/Job.types";
+import { IKeyEmployeeChange } from "./types/KeyEmployeeChange.types";
 
 /**
  * UUID or permalink of desired entity
