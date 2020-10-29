@@ -65,8 +65,6 @@ describe("service.entities", () => {
         );
         expect(organization.properties.identifier.permalink).toBeTruthy();
         expect(organization.properties.identifier.value).toBeTruthy();
-        expect(organization.properties.name).toContain(organizationName);
-        expect(organization.properties.uuid).toBeTruthy();
         expect(organization.cards.investors).toBeTruthy();
 
         done();
