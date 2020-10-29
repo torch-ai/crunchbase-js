@@ -23,8 +23,7 @@ At the top of your application, or in an imported configuration file:
 import Crunchbase from "@torch-ai/crunchbase";
 
 // Create an instance of the service
-const options = {};
-const crunchbase = new Crunchbase(process.env.API_KEY, options);
+const crunchbase = new Crunchbase(process.env.API_KEY, {});
 export default crunchbase;
 ```
 
@@ -32,9 +31,9 @@ export default crunchbase;
 
 ```js
 try {
-  const results = await crunchbase.getOrganizations({
-    name: "Tesla",
-  });
+  const { entities } = await service.autocomplete.search("Tesla", [
+    "organizations",
+  ]);
 } catch (error) {}
 ```
 
@@ -42,7 +41,7 @@ try {
 
 This package is provided through an MIT license. Usage of this package is freely available without restriction.
 
-Crunchbase itself has it's own
+Crunchbase itself has its own
 [terms of service](https://about.crunchbase.com/terms-of-service/),
 [account registration](https://about.crunchbase.com/products/crunchbase-for-applications/),
 and [attribution requirements](https://data.crunchbase.com/docs/using-the-api#section-using-the-rest-api).
