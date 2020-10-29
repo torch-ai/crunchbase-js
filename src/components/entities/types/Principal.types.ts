@@ -7,8 +7,8 @@ import {
   LayoutId,
 } from "../../components.types";
 
-// This is a little terrifying, but  huge time savings
-// Hopefully I have understood this correctly
+// This is a little terrifying, but huge time savings.
+// Hopefully I have understood this correctly.
 // @ts-expect-error Types of property 'entity_def_id' are incompatible.
 export interface IPrincipal extends IOrganization, IPerson {
   entity_def_id?: EntityDefId.Organization | EntityDefId.Person;
