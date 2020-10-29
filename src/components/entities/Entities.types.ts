@@ -18,6 +18,12 @@ export interface IEntityParams<EntityType, CardIds> {
   card_ids?: CardIds[];
 }
 
+export interface IEntityFlatParams {
+  entity_id: string;
+  field_ids?: string;
+  card_ids?: string;
+}
+
 export interface IEntityCardParams<EntityType, CardIds> {
   entity_id: EntityId;
   card_id: CardIds;
@@ -30,6 +36,16 @@ export interface IEntityCardParams<EntityType, CardIds> {
   /** Field name with order direction (asc/desc) */
   order?: string;
   /** Number of rows to return. Default is 100, min is 1, max is 100. */
+  limit?: number;
+}
+
+export interface IEntityCardFlatParams {
+  entity_id: string;
+  card_id: string;
+  card_field_ids?: string;
+  after_id?: string;
+  before_id?: string;
+  order?: string;
   limit?: number;
 }
 
