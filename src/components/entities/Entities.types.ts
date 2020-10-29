@@ -11,6 +11,9 @@ import { IFundingRound } from "./types/FundingRound.types";
 import { IFund } from "./types/Fund.types";
 import { IInvestment } from "./types/Investment.types";
 import { IPressReference } from "./types/PressReference.types";
+import { IEventAppearance } from "./types/EventAppearance.types";
+import { IIpo } from "./types/Ipo.types";
+import { IOwnership } from "./types/Ownership.types";
 
 /**
  * UUID or permalink of desired entity
