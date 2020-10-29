@@ -108,4 +108,41 @@ describe("service.search", () => {
 
     done();
   });
+
+  it("should search principals", async (done) => {
+    const limit = 4;
+    const results = await service.search.people({
+      field_ids: ["name", "identifier", "short_description"],
+      order: [
+        {
+          field_id: "rank_principal",
+          sort: "asc",
+        },
+      ],
+      query: [
+        {
+          type: "predicate",
+          field_id: "num_exits",
+          operator_id: "between",
+          values: [1, 3],
+        },
+      ],
+      limit,
+    });
+
+    expect(results.count).toBeGreaterThanOrEqual(0);
+    expect(Array.isArray(results.entities)).toBeTruthy();
+    expect(results.entities.length).toBe(limit);
+    results.entities.forEach(({ uuid, properties }) => {
+      expect(uuid).toBeTruthy();
+      expectIdentifier(properties);
+      expect(properties.identifier.uuid).toBe(uuid);
+      expect(properties.identifier.permalink).toBeTruthy();
+      expect(properties.identifier.value).toBeTruthy();
+      expect(properties.short_description).toBeTruthy();
+      expect(properties.name).toBeTruthy();
+    });
+
+    done();
+  });
 });
