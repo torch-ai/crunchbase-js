@@ -6,6 +6,7 @@ import {
   ILocationIdentifier,
   IName,
   IPermalink,
+  IPermalinkAliases,
   IShortDescription,
   IUpdated,
   IUUID,
@@ -16,6 +17,7 @@ export interface ILocation
     ICreated,
     IName,
     IPermalink,
+    IPermalinkAliases,
     IShortDescription,
     IUpdated,
     IUUID {

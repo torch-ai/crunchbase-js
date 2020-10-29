@@ -820,6 +820,9 @@ export interface IPermalink {
    * Searchable: No
    */
   permalink?: permalink;
+}
+
+export interface IPermalinkAliases {
   /**
    * maxItems: 255
    * These are the alternative aliases to the primary permalink of the Entity

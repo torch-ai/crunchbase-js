@@ -11,6 +11,7 @@ import {
   IImageUrl,
   ILink,
   IPermalink,
+  IPermalinkAliases,
   IShortDescription,
   IUpdated,
   IUUID,
@@ -24,6 +25,7 @@ export interface IEvent
     IImageId,
     IImageUrl,
     IPermalink,
+    IPermalinkAliases,
     IShortDescription,
     IUpdated,
     IUUID {
