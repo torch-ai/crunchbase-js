@@ -24,7 +24,7 @@ export default class Entities extends AbstractComponent {
       flatParams.field_ids = params.field_ids.join(",");
     }
     if (params.card_ids) {
-      flatParams.card_ids = params.field_ids.join(",");
+      flatParams.card_ids = params.card_ids.join(",");
     }
     return flatParams;
   };
