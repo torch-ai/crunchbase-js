@@ -56,6 +56,11 @@ export enum AcquisitionType {
   Merger = "merge",
 }
 
+export enum CompanyType {
+  ForProfit = "for_profit",
+  NonProfit = "non_profit",
+}
+
 /**
  * @link https://data.crunchbase.com/reference#currency-codes
  */
@@ -236,7 +241,7 @@ export enum CurrencyCode {
 }
 
 export enum EntityDefId {
-  Company = "company",
+  Organization = "organization",
   Person = "person",
   FundingRound = "funding_round",
   Acquisition = "acquisition",
@@ -254,7 +259,6 @@ export enum EntityDefId {
   KeyEmployeeChange = "key_employee_change",
   Address = "address",
   Degree = "degree",
-  Principal = "principal",
 }
 
 export enum EventType {
@@ -757,6 +761,15 @@ export interface ICreated {
    * Search Operators: between, blank, eq, gte, lte
    */
   created_at?: dateTime;
+}
+
+export interface ICompanyType {
+  /**
+   * Whether an Organization is for profit or non-profit
+   * Searchable: Yes
+   * Search Operators: blank, eq, includes, not_eq, not_includes
+   */
+  company_type?: CompanyType;
 }
 
 export interface IDescription {

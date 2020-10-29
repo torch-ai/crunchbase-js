@@ -6,6 +6,7 @@ import {
   FundingType,
   HubTags,
   ICategories,
+  ICompanyType,
   ICreated,
   IDateWithPrecision,
   IDescription,
@@ -18,6 +19,7 @@ import {
   ILocationIdentifier,
   IMoney,
   IName,
+  InterfaceKeys,
   InvestorStage,
   InvestorType,
   IPermalink,
@@ -40,11 +42,26 @@ import {
   SchoolType,
   Status,
 } from "../../components.types";
+import { IAcquisition } from "./Acquisition.types";
+import { IOwnership } from "./Ownership.types";
+import { IEventAppearance } from "./EventAppearance.types";
+import { IPerson } from "./Person.types";
+import { IAddress } from "./Address.types";
+import { IPrincipal } from "./Principal.types";
+import { IIpo } from "./Ipo.types";
+import { IJob } from "./Job.types";
+import { IKeyEmployeeChange } from "./KeyEmployeeChange.types";
+import { IFundingRound } from "./FundingRound.types";
+import { IFund } from "./Fund.types";
+import { IInvestment } from "./Investment.types";
+import { IPressReference } from "./PressReference.types";
+import { IEntityResponse, IEntityResponseCardsFields } from "../Entities.types";
 
 export interface IOrganization
   extends IIdentifier,
     ICategories,
     ICreated,
+    ICompanyType,
     IDescription,
     IUpdated,
     IFacebook,
@@ -83,17 +100,6 @@ export interface IOrganization
    **/
   closed_on?: IDateWithPrecision;
   /**
-   * Whether an Organization is for profit or non-profit
-   * Field Type: enum
-   * Searchable: Yes
-   * Search Operators: blank, eq, includes, not_eq, not_includes
-   * Possible values are:
-   *
-   * for_profit - For Profit
-   * non_profit - Non-profit
-   */
-  company_type?: "for_profit" | "non_profit";
-  /**
    *  maxLength: 8192
    * General contact email for the organization
    * Field Type: text_blob
@@ -124,10 +130,8 @@ export interface IOrganization
    * Searchable: Yes
    * Search Operators: blank, eq, includes, not_eq, not_includes
    * Possible values are:
-   *
-   * organization - Organization
    */
-  entity_def_id: EntityDefId.Company;
+  entity_def_id: EntityDefId.Organization;
   /**
    * Total funding amount raised across all Funding Rounds excluding debt
    * Searchable: Yes
@@ -580,4 +584,33 @@ export interface IOrganization
    * Search Operators: between, blank, eq, gte, lte
    */
   went_public_on?: date;
+}
+
+export interface IOrganizationResponse
+  extends IEntityResponse<IOrganization, InterfaceKeys<IOrganizationCards>> {
+  cards?: IOrganizationCards;
+}
+
+export interface IOrganizationCards
+  extends IEntityResponseCardsFields<IOrganization> {
+  acquiree_acquisitions?: IAcquisition[];
+  acquirer_acquisitions?: IAcquisition[];
+  child_organizations?: IOrganization[];
+  child_ownerships?: IOwnership[];
+  event_appearances?: IEventAppearance[];
+  founders?: IPerson[];
+  headquarters_address?: IAddress[];
+  investors?: IPrincipal[];
+  ipos?: IIpo[];
+  jobs?: IJob[];
+  key_employee_changes?: IKeyEmployeeChange[];
+  parent_organization?: IOrganization[];
+  parent_ownership?: IOwnership;
+  participated_funding_rounds?: IFundingRound[];
+  participated_funds?: IFund[];
+  participated_investments?: IInvestment[];
+  press_references?: IPressReference[];
+  raised_funding_rounds?: IFundingRound;
+  raised_funds?: IFund[];
+  raised_investments?: IInvestment[];
 }
