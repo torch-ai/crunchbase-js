@@ -16,6 +16,8 @@ import { IIpo } from "./types/Ipo.types";
 import { IOwnership } from "./types/Ownership.types";
 import { IJob } from "./types/Job.types";
 import { IKeyEmployeeChange } from "./types/KeyEmployeeChange.types";
+import { IAddress } from "./types/Address.types";
+import { IDegree } from "./types/Degree.types";
 
 /**
  * UUID or permalink of desired entity
