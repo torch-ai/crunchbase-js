@@ -708,7 +708,7 @@ export interface IErrors {
 
 export interface ILink {
   value: string;
-  label: string;
+  label?: string;
 }
 
 /** Every location entity in the system has a unique identifier that contains all necessary properties to represent it. */
