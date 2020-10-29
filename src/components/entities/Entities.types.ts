@@ -1,16 +1,16 @@
 import {
-  IAcquisition,
-  IFund,
-  IFundingRound,
   IIdentifier,
-  IInvestment,
   InterfaceKeys,
-  IOrganization,
-  IPerson,
-  IPressReference,
   permalink,
   uuid,
 } from "../components.types";
+import { IOrganization } from "./types/Organization.types";
+import { IAcquisition } from "./types/Acquisition.types";
+import { IPerson } from "./types/Person.types";
+import { IFundingRound } from "./types/FundingRound.types";
+import { IFund } from "./types/Fund.types";
+import { IInvestment } from "./types/Investment.types";
+import { IPressReference } from "./types/PressReference.types";
 
 /**
  * UUID or permalink of desired entity

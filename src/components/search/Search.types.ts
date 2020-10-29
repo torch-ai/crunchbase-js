@@ -1,8 +1,6 @@
 import {
   CurrencyCode,
-  IIdentifier,
   InterfaceKeys,
-  IOrganization,
   Operator,
   Order,
   uuid,
