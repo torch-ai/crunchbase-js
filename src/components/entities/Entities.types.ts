@@ -4,20 +4,6 @@ import {
   permalink,
   uuid,
 } from "../components.types";
-import { IOrganization } from "./types/Organization.types";
-import { IAcquisition } from "./types/Acquisition.types";
-import { IPerson } from "./types/Person.types";
-import { IFundingRound } from "./types/FundingRound.types";
-import { IFund } from "./types/Fund.types";
-import { IInvestment } from "./types/Investment.types";
-import { IPressReference } from "./types/PressReference.types";
-import { IEventAppearance } from "./types/EventAppearance.types";
-import { IIpo } from "./types/Ipo.types";
-import { IOwnership } from "./types/Ownership.types";
-import { IJob } from "./types/Job.types";
-import { IKeyEmployeeChange } from "./types/KeyEmployeeChange.types";
-import { IAddress } from "./types/Address.types";
-import { IDegree } from "./types/Degree.types";
 
 /**
  * UUID or permalink of desired entity
@@ -47,59 +33,10 @@ export interface IEntityCardParams<EntityType, CardIds> {
   limit?: number;
 }
 
-interface IEntityResponse<EntityType, CardIds> {
+export interface IEntityResponse<EntityType, CardIds> {
   properties: Partial<EntityType> & IIdentifier;
 }
 
-interface IEntityResponseCardsFields<EntityType> {
+export interface IEntityResponseCardsFields<EntityType> {
   fields?: Partial<EntityType>;
-}
-
-export interface IOrganizationResponse
-  extends IEntityResponse<IOrganization, InterfaceKeys<IOrganizationCards>> {
-  cards?: IOrganizationCards;
-}
-
-export interface IOrganizationCards
-  extends IEntityResponseCardsFields<IOrganization> {
-  acquiree_acquisitions?: IAcquisition[];
-  acquirer_acquisitions?: IAcquisition[];
-  child_organizations?: IOrganization[];
-  child_ownerships?: IOwnership[];
-  event_appearances?: IEventAppearance[];
-  founders?: IPerson[];
-  headquarters_address?: IAddress[];
-  investors?: IPrincipal[];
-  ipos?: IIpo[];
-  jobs?: IJob[];
-  key_employee_changes?: IKeyEmployeeChange[];
-  parent_organization?: IOrganization[];
-  parent_ownership?: IOwnership;
-  participated_funding_rounds?: IFundingRound[];
-  participated_funds?: IFund[];
-  participated_investments?: IInvestment[];
-  press_references?: IPressReference[];
-  raised_funding_rounds?: IFundingRound;
-  raised_funds?: IFund[];
-  raised_investments?: IInvestment[];
-}
-
-export interface IPersonResponse
-  extends IEntityResponse<IPerson, InterfaceKeys<IPersonCards>> {
-  cards?: IPersonCards;
-}
-
-export interface IPersonCards extends IEntityResponseCardsFields<IPerson> {
-  degrees: IDegree[];
-  event_appearances: IEventAppearance[];
-  founded_organizations: IOrganization[];
-  jobs: IJob[];
-  participated_funding_rounds: IFundingRound[];
-  participated_funds: IFund[];
-  participated_investments: IInvestment[];
-  partner_funding_rounds: IFundingRound[];
-  partner_investments: IInvestment[];
-  press_references: IPressReference[];
-  primary_job: IJob[];
-  primary_organization: IOrganization[];
 }

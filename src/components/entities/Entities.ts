@@ -1,12 +1,12 @@
 import AbstractComponent from "../AbstractComponent";
-import { InterfaceKeys, IOrganization, IPerson } from "../components.types";
+import { InterfaceKeys } from "../components.types";
+import { IEntityParams, IEntityCardParams } from "./Entities.types";
 import {
-  IEntityParams,
-  IEntityCardParams,
+  IOrganization,
   IOrganizationCards,
   IOrganizationResponse,
-  IPersonResponse,
-} from "./Entities.types";
+} from "./types/Organization.types";
+import { IPerson, IPersonCards, IPersonResponse } from "./types/Person.types";
 
 export default class Entities extends AbstractComponent {
   private static BASE = "entities/";
@@ -59,7 +59,7 @@ export default class Entities extends AbstractComponent {
   }
 
   public async personCard(
-    params: IEntityCardParams<IPerson, InterfaceKeys<IOrganizationCards>>
+    params: IEntityCardParams<IPerson, InterfaceKeys<IPersonCards>>
   ): Promise<IPersonResponse> {
     const uri =
       Entities.BASE + `people/${params.entity_id}/cards/${params.card_id}`;

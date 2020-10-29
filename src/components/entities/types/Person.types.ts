@@ -13,6 +13,7 @@ import {
   ILinkedIn,
   ILocationIdentifier,
   IName,
+  InterfaceKeys,
   InvestorStage,
   InvestorType,
   IPermalink,
@@ -25,6 +26,15 @@ import {
   IWebsiteUrl,
   LayoutId,
 } from "../../components.types";
+import { IDegree } from "./Degree.types";
+import { IEventAppearance } from "./EventAppearance.types";
+import { IOrganization } from "./Organization.types";
+import { IJob } from "./Job.types";
+import { IFundingRound } from "./FundingRound.types";
+import { IFund } from "./Fund.types";
+import { IInvestment } from "./Investment.types";
+import { IPressReference } from "./PressReference.types";
+import { IEntityResponse, IEntityResponseCardsFields } from "../Entities.types";
 
 export interface IPerson
   extends IIdentifier,
@@ -289,4 +299,24 @@ export interface IPerson
    * Search Operators: between, blank, eq, gt, gte, lt, lte, not_eq
    */
   rank_principal?: number;
+}
+
+export interface IPersonResponse
+  extends IEntityResponse<IPerson, InterfaceKeys<IPersonCards>> {
+  cards?: IPersonCards;
+}
+
+export interface IPersonCards extends IEntityResponseCardsFields<IPerson> {
+  degrees: IDegree[];
+  event_appearances: IEventAppearance[];
+  founded_organizations: IOrganization[];
+  jobs: IJob[];
+  participated_funding_rounds: IFundingRound[];
+  participated_funds: IFund[];
+  participated_investments: IInvestment[];
+  partner_funding_rounds: IFundingRound[];
+  partner_investments: IInvestment[];
+  press_references: IPressReference[];
+  primary_job: IJob[];
+  primary_organization: IOrganization[];
 }
