@@ -1,6 +1,6 @@
 # Crunchbase services
 
-> This package provides a standardized layer for accessing [crunchbase services](https://data.crunchbase.com/docs/using-the-api) along with data types.
+> This package provides a standardized layer for accessing [crunchbase services](https://data.crunchbase.com/docs/using-the-api) along with TypeScript typings.
 
 Current version: [v4.0](https://data.crunchbase.com/docs_)
 
