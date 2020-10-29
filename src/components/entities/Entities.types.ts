@@ -1,5 +1,6 @@
 import {
   IAcquisition,
+  IFund,
   IFundingRound,
   IIdentifier,
   IInvestment,
