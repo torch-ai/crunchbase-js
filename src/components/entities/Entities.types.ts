@@ -1,8 +1,12 @@
 import {
+  IAcquisition,
+  IFundingRound,
   IIdentifier,
+  IInvestment,
   InterfaceKeys,
   IOrganization,
   IPerson,
+  IPressReference,
   permalink,
   uuid,
 } from "../components.types";
