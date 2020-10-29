@@ -34,6 +34,28 @@ export type Operator =
   | "not_includes_all"
   | "domain_eq";
 
+export enum AcquisitionDisposition {
+  Combined = "combined",
+  Division = "division",
+  Product = "product",
+  SeparateEntity = "separate_entity",
+  Subsidiary = "subsidiary",
+}
+
+export enum AcquisitionTerms {
+  Cash = "cash",
+  CashAndStock = "cash_and_stock",
+  Stock = "stock",
+}
+
+export enum AcquisitionType {
+  Acquihire = "acquihire",
+  Acquisition = "acquisition",
+  LeveragedBuyout = "lbo",
+  ManagementBuyout = "management_buyout",
+  Merger = "merge",
+}
+
 /**
  * @link https://data.crunchbase.com/reference#currency-codes
  */
@@ -235,6 +257,22 @@ export enum EntityDefId {
   Principal = "principal",
 }
 
+export enum EventType {
+  Class = "class",
+  Competition = "competition",
+  Conference = "conference",
+  DemoDay = "demo_day",
+  Expo = "expo",
+  Festival = "festival",
+  Hackathon = "hackathon",
+  Meetup = "meetup",
+  Networking = "networking",
+  Other = "other",
+  Seminar = "seminar",
+  Virtual = "virtual",
+  Webinar = "webinar",
+}
+
 export enum FacetId {
   Company = "company",
   Investor = "investor",
@@ -321,6 +359,13 @@ export enum HubTags {
   ExitedUnicorn = "exited_unicorn",
   PledgeOnePercent = "pledge_one_percent",
   Unicorn = "unicorn",
+}
+
+export enum InvestmentState {
+  EarlyStageVenture = "early_stage_venture",
+  LateStageVenture = "late_stage_venture",
+  PrivateEquity = "private_equity",
+  Seed = "seed",
 }
 
 export enum InvestorStage {
@@ -440,8 +485,10 @@ export enum SchoolType {
 }
 
 export enum Status {
+  Complete = "complete",
   Closed = "closed",
   IPO = "ipo",
+  Pending = "pending",
   Operating = "operating",
   WasAcquired = "was_acquired",
 }
@@ -612,6 +659,15 @@ export enum StockExchangeSymbol {
   ZSE_ZagrebStockExchange = "zse_hr",
 }
 
+export interface IAnnouncedOn {
+  /**
+   * Date the acquisition was announced
+   * Searchable: Yes
+   * Search Operators: between, blank, eq, gte, lte
+   */
+  announced_on?: IDateWithPrecision;
+}
+
 export interface IDateWithPrecision {
   /** A field that will contain date information up to a certain level of precision. E.g. month, day, etc. */
   description: "none" | "year" | "month" | "day";
@@ -642,8 +698,6 @@ export interface IErrors {
 }
 
 export interface ILink {
-  /** An object representing both the url and some labeling text for that url */
-  description: string;
   value: string;
   label: string;
 }
@@ -652,6 +706,15 @@ export interface ILink {
 export interface ILocationIdentifier extends IEntityIdentifier {
   /** Type of location (city, country, etc) */
   location_type?: LocationType;
+}
+
+export interface IName {
+  /**
+   * string
+   * maxLength: 8192
+   * Searchable: No
+   */
+  name?: string;
 }
 
 export interface IMoneyDecimal {
@@ -668,12 +731,37 @@ export interface IMoney {
   value: number;
 }
 
+export interface ICategories {
+  /**
+   * Descriptive keyword for an Organization (e.g. SaaS, Android, Cloud Computing, Medical Device)
+   * Searchable: Yes
+   * Search Operators: blank, includes, includes_all, not_includes, not_includes_all
+   */
+  categories?: IEntityIdentifier[];
+  /**
+   * Superset of Industries (e.g. Software, Mobile, Health Care)
+   * Searchable: Yes
+   * Search Operators: blank, includes, includes_all, not_includes, not_includes_all
+   */
+  category_groups?: IEntityIdentifier[];
+}
+
 export interface ICreated {
   /**
    * Searchable: Yes
    * Search Operators: between, blank, eq, gte, lte
    */
   created_at?: dateTime;
+}
+
+export interface IDescription {
+  /**
+   * maxLength: 8192
+   * Text from a Entity
+   * Searchable: Yes
+   * Search Operators: blank, contains, not_contains
+   */
+  description?: string;
 }
 
 export interface IFacebook {
@@ -694,13 +782,16 @@ export interface IIdentifier {
   identifier: IEntityIdentifier;
 }
 
-export interface IImage {
+export interface IImageId {
   /**
    * maxLength: 255
    * The profile image of the entity on Crunchbase
    * Searchable: No
    */
   image_id?: imageId;
+}
+
+export interface IImageUrl {
   /**
    * maxLength: 8192
    * The cloudinary url of the profile image
@@ -789,13 +880,19 @@ export interface IWebsiteUrl {
   website_url?: url;
 }
 
+/** Core types */
+
 export interface IOrganization
   extends IIdentifier,
+    ICategories,
     ICreated,
+    IDescription,
     IUpdated,
     IFacebook,
-    IImage,
+    IImageId,
+    IImageUrl,
     ILinkedIn,
+    IName,
     IPermalink,
     IShortDescription,
     ITwitter,
@@ -818,18 +915,6 @@ export interface IOrganization
    * maxLength: 255
    */
   aliases?: string[];
-  /**
-   * Descriptive keyword for an Organization (e.g. SaaS, Android, Cloud Computing, Medical Device)
-   * Searchable: Yes
-   * Search Operators: blank, includes, includes_all, not_includes, not_includes_all
-   */
-  categories?: IEntityIdentifier[];
-  /**
-   * Superset of Industries (e.g. Software, Mobile, Health Care)
-   * Searchable: Yes
-   * Search Operators: blank, includes, includes_all, not_includes, not_includes_all
-   */
-  category_groups?: IEntityIdentifier[];
   /**
    * The date when the organization is closed
    * Searchable: Yes
@@ -867,14 +952,6 @@ export interface IOrganization
    * Search Operators: blank, eq
    */
   demo_days?: boolean;
-  /**
-   * maxLength: 8192
-   * Organization Description, Industries, Industry Groups
-   * Field Type: text_long
-   * Searchable: Yes
-   * Search Operators: blank, contains, not_contains
-   */
-  description?: string;
   /**
    * Types of diversity represented in an organization, specifically of those who are founding members, currently the CEO, or have check-writing abilities in an investment firm. This feature is in beta and may change with future updates.
    * Searchable: Yes
@@ -1055,11 +1132,6 @@ export interface IOrganization
    * Search Operators: blank, includes, includes_all, not_includes, not_includes_all
    */
   location_identifiers?: ILocationIdentifier[];
-  /**
-   * maxLength: 8192
-   * Searchable: No
-   */
-  name?: string;
   /**
    * Total number of Acquisitions
    * Field Type: integer
@@ -1331,7 +1403,7 @@ export interface IOrganization
    * Searchable: Yes
    * Search Operators: blank, eq, includes, not_eq, not_includes
    */
-  status?: Status;
+  status?: Status.Closed | Status.IPO | Status.Operating | Status.WasAcquired;
   /**
    * Stock exchange where the Organization is listed e.g. NYSE, NASDAQ
    * Searchable: Yes
@@ -1369,13 +1441,16 @@ export interface IOrganization
 export interface IPerson
   extends IIdentifier,
     ICreated,
-    IUpdated,
+    IDescription,
     IFacebook,
-    IImage,
+    IImageId,
+    IImageUrl,
     ILinkedIn,
+    IName,
     IPermalink,
     IShortDescription,
     ITwitter,
+    IUpdated,
     IUUID,
     IWebsite,
     IWebsiteUrl {
@@ -1393,13 +1468,6 @@ export interface IPerson
    * Search Operators: between, blank, eq, gte, lte
    */
   born_on?: date;
-  /**
-   * maxLength: 8192
-   * Text from a Person's biography
-   * Searchable: Yes
-   * Search Operators: blank, contains, not_contains
-   */
-  description?: string;
   /**
    * The date when a person died
    * Searchable: Yes
@@ -1472,11 +1540,6 @@ export interface IPerson
    * Searchable: No
    */
   middle_name?: string;
-  /**
-   * Full name of a Person
-   * Searchable: No
-   */
-  name?: string;
   /**
    * Number of news articles that reference the Person
    * Field Type: integer
@@ -1637,4 +1700,529 @@ export interface IPerson
    * Search Operators: between, blank, eq, gt, gte, lt, lte, not_eq
    */
   rank_principal?: number;
+}
+
+/** Other types */
+
+export interface IAcquisition
+  extends IIdentifier,
+    IAnnouncedOn,
+    ICreated,
+    IPermalink,
+    IShortDescription,
+    IUpdated,
+    IUUID {
+  /**
+   * Keyword, sector, or industry
+   * Searchable: Yes
+   * Search Operators: blank, includes, includes_all, not_includes, not_includes_all
+   */
+  acquiree_categories?: IEntityIdentifier[];
+  /**
+   * Total funding amount raised across all acquired organization's funding rounds
+   * Searchable: Yes
+   * Search Operators: between, blank, eq, gt, gte, lt, lte, not_eq
+   */
+  acquiree_funding_total?: IMoney;
+  /**
+   * Name of the acquired organization
+   * Searchable: Yes
+   * Search Operators: blank, contains, eq, includes, not_contains, not_eq, not_includes, starts
+   */
+  acquiree_identifier?: IEntityIdentifier;
+  /**
+   * Last funding round type (e.g. Series A, Seed, Private Equity)
+   * Searchable: Yes
+   * Search Operators: blank, eq, includes, not_eq, not_includes
+   */
+  acquiree_last_funding_type?: FundingType;
+  /**
+   * Where the acquired organization is headquartered
+   * Searchable: Yes
+   * Search Operators: blank, includes, includes_all, not_includes, not_includes_all
+   */
+  acquiree_locations?: ILocationIdentifier[];
+  /**
+   * Acquired organization's total number of funding rounds
+   * Searchable: Yes
+   * Search Operators: between, blank, eq, gt, gte, lt, lte, not_eq
+   */
+  acquiree_num_funding_rounds?: number;
+  /**
+   * Estimated revenue range for acquired organization
+   * Searchable: Yes
+   * Search Operators: blank, eq, includes, not_eq, not_includes
+   */
+  acquiree_revenue_range?: RevenueRange;
+  /**
+   * maxLength: 8192
+   * Text of acquired organization's description, industries, and industry groups
+   * Searchable: Yes
+   * Search Operators: blank, contains, not_contains
+   */
+  acquiree_short_description?: string;
+  /**
+   * Keyword, sector, or industry
+   * Searchable: Yes
+   * Search Operators: blank, includes, includes_all, not_includes, not_includes_all
+   */
+  acquirer_categories?: IEntityIdentifier[];
+  /**
+   * Acquiring organization's most recent funding status
+   * Searchable: Yes
+   * Search Operators: blank, eq, includes, not_eq, not_includes
+   */
+  acquirer_funding_stage?: FundingState;
+  /**
+   * Total funding amount raised across all acquiring organization's funding rounds
+   * Searchable: Yes
+   * Search Operators: between, blank, eq, gt, gte, lt, lte, not_eq
+   */
+  acquirer_funding_total?: IMoney;
+  /**
+   * Name of the acquiring organization
+   * Searchable: Yes
+   * Search Operators: blank, contains, eq, includes, not_contains, not_eq, not_includes, starts
+   */
+  acquirer_identifier?: IEntityIdentifier;
+  /**
+   * Where the organization is headquartered
+   * Searchable: Yes
+   * Search Operators: blank, includes, includes_all, not_includes, not_includes_all
+   */
+  acquirer_locations?: ILocationIdentifier[];
+  /**
+   * Acquiring organization's total number of funding rounds
+   * Searchable: Yes
+   * Search Operators: between, blank, eq, gt, gte, lt, lte, not_eq
+   */
+  acquirer_num_funding_rounds?: number;
+  /**
+   * Estimated revenue range for acquiring organization
+   * Searchable: Yes
+   * Search Operators: blank, eq, includes, not_eq, not_includes
+   */
+  acquirer_revenue_range?: RevenueRange;
+  /**
+   * maxLength: 8192
+   * Text of acquiring organization's description, industries, and industry groups
+   * Searchable: Yes
+   * Search Operators: blank, contains, not_contains
+   */
+  acquirer_short_description?: string;
+  /**
+   * Type of acquisition
+   * Searchable: Yes
+   * Search Operators: blank, eq, includes, not_eq, not_includes
+   */
+  acquisition_type?: AcquisitionType;
+  /**
+   * Date the Acquisition was completed
+   * Searchable: Yes
+   * Search Operators: between, blank, eq, gte, lte
+   */
+  completed_on?: IDateWithPrecision;
+  /**
+   * How is the acquired Organization structured after the acquisition
+   * Searchable: Yes
+   * Search Operators: blank, eq, includes, not_eq, not_includes
+   */
+  disposition_of_acquired?: AcquisitionDisposition;
+  /**
+   * Searchable: Yes
+   * Search Operators: blank, eq, includes, not_eq, not_includes
+   */
+  entity_def_id?: EntityDefId.Acquisition;
+  /**
+   * Price of the acquisition
+   * Searchable: Yes
+   * Search Operators: between, blank, eq, gt, gte, lt, lte, not_eq
+   */
+  price?: IMoney;
+  /**
+   * Algorithmic rank assigned to the top 100,000 most active Acquisitions
+   * Field Type: integer
+   * Searchable: Yes
+   * Search Operators: between, blank, eq, gt, gte, lt, lte, not_eq
+   */
+  rank_acquisition?: number;
+  /**
+   * Status of the acquisition
+   * Searchable: Yes
+   * Search Operators: blank, eq, includes, not_eq, not_includes
+   */
+  status?: Status.Pending | Status.Complete; // TODO should this be a different enum?
+  /**
+   * Terms of the acquisition
+   * Searchable: Yes
+   * Search Operators: blank, eq, includes, not_eq, not_includes
+   */
+  terms?: AcquisitionTerms;
+}
+
+export interface IFundingRound
+  extends IIdentifier,
+    IAnnouncedOn,
+    ICreated,
+    IImageId,
+    IName,
+    IPermalink,
+    IShortDescription,
+    IUpdated,
+    IUUID {
+  /**
+   * Date that the Funding Round was closed
+   * Searchable: Yes
+   * Search Operators: between, blank, eq, gte, lte
+   */
+  closed_on?: IDateWithPrecision;
+  /**
+   * Searchable: Yes
+   * Search Operators: blank, eq, includes, not_eq, not_includes
+   */
+  entity_def_id?: EntityDefId.FundingRound;
+  /**
+   * Industries of the organization that got funded
+   * Searchable: Yes
+   * Search Operators: blank, includes, includes_all, not_includes, not_includes_all
+   */
+  funded_organization_categories?: IEntityIdentifier[];
+  /**
+   * maxLength: 8192
+   * Description of the organization that got funded
+   * Searchable: Yes
+   * Search Operators: blank, contains, not_contains
+   */
+  funded_organization_description?: string;
+  /**
+   * Types of diversity represented in an organization, specifically of those who are founding members, currently the CEO, or have check-writing abilities in an investment firm. This feature is in beta and may change with future updates.
+   * Searchable: Yes
+   * Search Operators: blank, includes, includes_all, not_includes, not_includes_all
+   */
+  funded_organization_diversity_spotlights?: IEntityIdentifier[];
+  /**
+   * Organization's most recent funding status
+   * Searchable: Yes
+   * Search Operators: blank, eq, includes, not_eq, not_includes
+   */
+  funded_organization_funding_stage?: FundingState;
+  /**
+   * Total funding amount raised across all Funding Rounds
+   * Searchable: Yes
+   * Search Operators: between, blank, eq, gt, gte, lt, lte, not_eq
+   */
+  funded_organization_funding_total?: IMoney;
+  /**
+   * Name of the organization that got funded
+   * Searchable: Yes
+   * Search Operators: blank, contains, eq, includes, not_contains, not_eq, not_includes, starts
+   */
+  funded_organization_identifier?: IEntityIdentifier;
+  /**
+   * Location of the organization that got funded
+   * Searchable: Yes
+   * Search Operators: blank, includes, includes_all, not_includes, not_includes_all
+   */
+  funded_organization_location?: ILocationIdentifier;
+  /**
+   * Revenue range of the organization that got funded
+   * Searchable: Yes
+   * Search Operators: blank, eq, includes, not_eq, not_includes
+   */
+  funded_organization_revenue_range?: RevenueRange;
+  /**
+   * The funding stage of a funding round
+   * Searchable: Yes
+   * Search Operators: blank, eq, includes, not_eq, not_includes
+   */
+  investment_stage?: InvestmentState;
+  /**
+   * Type of Funding Round (e.g. Seed, Series A, Private Equity, Debt Financing)
+   * Searchable: Yes
+   * Search Operators: blank, eq, includes, not_eq, not_includes
+   */
+  investment_type?: FundingType;
+  /**
+   * Names of all investors who invested in the funding round
+   * Searchable: Yes
+   * Search Operators: blank, includes, includes_all, not_includes, not_includes_all
+   */
+  investor_identifiers?: IEntityIdentifier[];
+  /**
+   * This indicates whether the Funding Round is financed only through equity.
+   * Searchable: Yes
+   * Search Operators: blank, eq
+   */
+  is_equity?: boolean;
+  /**
+   * Name of the investor who led the investment in the funding round
+   * Searchable: Yes
+   * Search Operators: blank, includes, includes_all, not_includes, not_includes_all
+   */
+  lead_investor_identifiers?: IEntityIdentifier[];
+  /**
+   * Amount of money raised in Funding Round
+   * Searchable: Yes
+   * Search Operators: between, blank, eq, gt, gte, lt, lte, not_eq
+   */
+  money_raised?: IMoney;
+  /**
+   * Total number of Investors in a Funding Round
+   * Searchable: Yes
+   * Search Operators: between, blank, eq, gt, gte, lt, lte, not_eq
+   */
+  num_investors?: number;
+  /**
+   * Total number of Partner Investors in a Funding Round
+   * Searchable: Yes
+   * Search Operators: between, blank, eq, gt, gte, lt, lte, not_eq
+   */
+  num_partners?: number;
+  /**
+   * Valuation of a Company after a Funding Round
+   * Searchable: Yes
+   * Search Operators: between, blank, eq, gt, gte, lt, lte, not_eq
+   */
+  post_money_valuation?: IMoney;
+  /**
+   * Valuation of a Company before a Funding Round
+   * Searchable: Yes
+   * Search Operators: between, blank, eq, gt, gte, lt, lte, not_eq
+   */
+  pre_money_valuation?: IMoney;
+  /**
+   * Algorithmic rank assigned to the top 100,000 most active Funding Rounds
+   * Searchable: Yes
+   * Search Operators: between, blank, eq, gt, gte, lt, lte, not_eq
+   */
+  rank_funding_round?: number;
+  /**
+   * Amount of money the funded Organization would like to raised in the Funding Round
+   * Searchable: Yes
+   * Search Operators: between, blank, eq, gt, gte, lt, lte, not_eq
+   */
+  target_money_raised?: IMoney;
+}
+
+export interface IInvestment
+  extends IIdentifier,
+    IAnnouncedOn,
+    ICreated,
+    IName,
+    IPermalink,
+    IUpdated,
+    IUUID {
+  /**
+   Searchable: Yes
+   Search Operators: blank, eq, includes, not_eq, not_includes
+   Possible values are:
+   */
+  entity_def_id?: EntityDefId.Investment;
+  /**
+   * Name of the funding round where the Investment is made
+   * Searchable: Yes
+   * Search Operators: blank, contains, eq, includes, not_contains, not_eq, not_includes, starts
+   */
+  funding_round_identifier?: IEntityIdentifier;
+  /**
+   * Amount of money raised in Funding Round
+   * Searchable: Yes
+   * Search Operators: between, blank, eq, gt, gte, lt, lte, not_eq
+   */
+  funding_round_money_raised?: IMoney;
+  /**
+   * Name of the investor who participated in the Investment
+   * Searchable: Yes
+   * Search Operators: blank, contains, eq, includes, not_contains, not_eq, not_includes, starts
+   */
+  investor_identifier?: IEntityIdentifier;
+  /**
+   * This describes the stage of investor this organization or person is (e.g. Angel, Fund of Funds, Venture Capital)
+   * Searchable: Yes
+   * Search Operators: blank, includes, includes_all, not_includes, not_includes_all
+   */
+  investor_stage?: InvestorStage[];
+  /**
+   * This field indicates whether an investor led/organized the investment
+   * Searchable: Yes
+   * Search Operators: blank, eq
+   */
+  is_lead_investor?: boolean;
+  /**
+   * Amount of money an Investor contributed into an investment
+   * Searchable: Yes
+   * Search Operators: between, blank, eq, gt, gte, lt, lte, not_eq
+   */
+  money_invested?: IMoney;
+  /**
+   * Types of diversity represented in an organization, specifically of those who are founding members, currently the CEO, or have check-writing abilities in an investment firm. This feature is in beta and may change with future updates.
+   * Searchable: Yes
+   * Search Operators: blank, includes, includes_all, not_includes, not_includes_all
+   */
+  organization_diversity_spotlights?: IEntityIdentifier[];
+  /**
+   * Name of the organization that received the investment
+   * Searchable: Yes
+   * Search Operators: blank, contains, eq, includes, not_contains, not_eq, not_includes, starts
+   */
+  organization_identifier?: IEntityIdentifier;
+  /**
+   * Name of the individual who led a funding round for his/her firm
+   * Searchable: Yes
+   * Search Operators: blank, includes, includes_all, not_includes, not_includes_all
+   */
+  partner_identifiers?: IEntityIdentifier[];
+}
+
+export interface IEvent
+  extends IIdentifier,
+    ICategories,
+    ICreated,
+    IDescription,
+    IImageId,
+    IImageUrl,
+    IPermalink,
+    IShortDescription,
+    IUpdated,
+    IUUID {
+  /**
+   * End date of the Event
+   * Searchable: Yes
+   * Search Operators: between, blank, eq, gte, lte
+   */
+  ends_on?: date;
+  /**
+   * Searchable: Yes
+   * Search Operators: blank, eq, includes, not_eq, not_includes
+   */
+  entity_def_id?: EntityDefId.Event;
+  /**
+   * Type of Event (e.g. hackathon, meetup, conference)
+   * Searchable: Yes
+   * Search Operators: blank, includes, includes_all, not_includes, not_includes_all
+   */
+  event_type?: EventType;
+  /**
+   * Link to main Event page
+   * Searchable: No
+   */
+  event_url?: ILink;
+  /**
+   * Total number of Contestants at the Event
+   * Field Type: integer
+   * Searchable: Yes
+   * Search Operators: between, blank, eq, gt, gte, lt, lte, not_eq
+   */
+  num_contestants?: number;
+  /**
+   * Total number of Exhibitors at the Event
+   * Field Type: integer
+   * Searchable: Yes
+   * Search Operators: between, blank, eq, gt, gte, lt, lte, not_eq
+   */
+  num_exhibitors?: number;
+  /**
+   * Total number of Organizers at the Event
+   * Field Type: integer
+   * Searchable: Yes
+   * Search Operators: between, blank, eq, gt, gte, lt, lte, not_eq
+   */
+  num_organizers?: number;
+  /**
+   * Total number of Speakers at the Event
+   * Field Type: integer
+   * Searchable: Yes
+   * Search Operators: between, blank, eq, gt, gte, lt, lte, not_eq
+   */
+  num_speakers?: number;
+  /**
+   * Total number of Sponsors for the Event
+   * Field Type: integer
+   * Searchable: Yes
+   * Search Operators: between, blank, eq, gt, gte, lt, lte, not_eq
+   */
+  num_sponsors?: number;
+  /**
+   * The organizer of the Event
+   * Searchable: Yes
+   * Search Operators: blank, includes, includes_all, not_includes, not_includes_all
+   */
+  organizer_identifiers?: IEntityIdentifier[];
+  /**
+   * Algorithmic rank assigned to the top 100,000 most active Events
+   * Field Type: integer
+   * Searchable: Yes
+   * Search Operators: between, blank, eq, gt, gte, lt, lte, not_eq
+   */
+  rank_event?: number;
+  /**
+   * Link to the Event registration page
+   * Searchable: No
+   */
+  registration_url?: ILink;
+  /**
+   * Start date of the Event
+   * Searchable: Yes
+   * Search Operators: between, blank, eq, gte, lte
+   */
+  starts_on?: date;
+  /**
+   * Name of the Event venue
+   * Searchable: Yes
+   * Search Operators: blank, contains, eq, not_contains, not_eq, starts
+   */
+  venue_name?: string;
+}
+
+export interface IPressReference
+  extends IIdentifier,
+    ICreated,
+    IUpdated,
+    IUUID {
+  /**
+   * Entities mentioned in the press reference
+   * Searchable: Yes
+   * Search Operators: blank, includes, includes_all, not_includes, not_includes_all
+   */
+  activity_entities?: IEntityIdentifier[];
+  /**
+   * maxLength: 8192
+   * The author of the press reference
+   * Searchable: No
+   */
+  author?: string;
+  /**
+   * Searchable: Yes
+   * Search Operators: blank, eq, includes, not_eq, not_includes
+   */
+  entity_def_id?: EntityDefId.PressReference;
+  /**
+   * Date when the press reference is posted
+   * Searchable: Yes
+   * Search Operators: between, blank, eq, gte, lte
+   */
+  posted_on?: date;
+  /**
+   * maxLength: 8192
+   * The publisher of the press reference
+   * Searchable: No
+   */
+  publisher?: string;
+  /**
+   * maxLength: 8192
+   * Searchable: No
+   */
+  thumbnail_url?: string;
+  /**
+   * maxLength: 8192
+   * The title of the press reference
+   * Searchable: Yes
+   * Search Operators: blank, contains, not_contains
+   */
+  title?: string;
+  /**
+   * The URL of the press reference
+   * Searchable: No
+   */
+  url?: ILink;
 }
