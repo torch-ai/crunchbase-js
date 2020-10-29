@@ -277,6 +277,11 @@ export enum FacetId {
   Company = "company",
   Investor = "investor",
   School = "school",
+  City = "city",
+  Continent = "continent",
+  Country = "country",
+  RegionalArea = "group",
+  Region = "region",
 }
 
 export enum FundingState {
