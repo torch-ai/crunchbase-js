@@ -9,8 +9,23 @@ import {
 
 // This is a little terrifying, but huge time savings.
 // Hopefully I have understood this correctly.
-// @ts-expect-error Types of property 'entity_def_id' are incompatible.
-export interface IPrincipal extends IOrganization, IPerson {
+export interface IPrincipal
+  extends Omit<
+      IOrganization,
+      | "entity_def_id"
+      | "facet_ids"
+      | "investor_type"
+      | "layout_id"
+      | "override_layout_id"
+    >,
+    Omit<
+      IPerson,
+      | "entity_def_id"
+      | "facet_ids"
+      | "investor_type"
+      | "layout_id"
+      | "override_layout_id"
+    > {
   entity_def_id?: EntityDefId.Organization | EntityDefId.Person;
   facet_ids?: (FacetId.Company | FacetId.Investor | FacetId.School)[];
   investor_type?: InvestorType;
