@@ -31,7 +31,7 @@ describe("service.entities", () => {
       await fn({ entities, entity });
     };
 
-    it("should get an organization", async (done) => {
+    it("should get an organization", async () => {
       await withOrganizationsContext(async ({ entity }) => {
         const organization = await service.entities.organization({
           entity_id: entity.identifier.uuid,
@@ -49,12 +49,10 @@ describe("service.entities", () => {
         expect(organization.cards.investors).toBeTruthy();
         expect(organization.cards.event_appearances).toBeTruthy();
         expect(organization.cards.founders).toBeTruthy();
-
-        done();
       });
     });
 
-    it("should get a organization card", async (done) => {
+    it("should get a organization card", async () => {
       await withOrganizationsContext(async ({ entity }) => {
         const organization = await service.entities.organizationCard({
           entity_id: entity.identifier.uuid,
@@ -67,8 +65,6 @@ describe("service.entities", () => {
         expect(organization.properties.identifier.permalink).toBeTruthy();
         expect(organization.properties.identifier.value).toBeTruthy();
         expect(organization.cards.investors).toBeTruthy();
-
-        done();
       });
     });
   });
@@ -95,7 +91,7 @@ describe("service.entities", () => {
       await fn({ entities, entity });
     };
 
-    it("should get a person", async (done) => {
+    it("should get a person", async () => {
       await withPersonsContext(async ({ entity }) => {
         const person = await service.entities.person({
           entity_id: entity.identifier.uuid,
@@ -111,12 +107,10 @@ describe("service.entities", () => {
         expect(person.properties.uuid).toBeTruthy();
         expect(person.cards.event_appearances).toBeTruthy();
         expect(person.cards.jobs).toBeTruthy();
-
-        done();
       });
     });
 
-    it("should get a person card", async (done) => {
+    it("should get a person card", async () => {
       await withPersonsContext(async ({ entity }) => {
         const organization = await service.entities.personCard({
           entity_id: entity.identifier.uuid,
@@ -129,8 +123,6 @@ describe("service.entities", () => {
         expect(organization.properties.identifier.permalink).toBeTruthy();
         expect(organization.properties.identifier.value).toBeTruthy();
         expect(organization.cards.jobs).toBeTruthy();
-
-        done();
       });
     });
   });
