@@ -10,7 +10,7 @@ describe("service.search", () => {
   });
 
   // Based on https://app.swaggerhub.com/apis-docs/Crunchbase/crunchbase-enterprise_api/1.0.3#/Search/post_searches_organizations
-  it("should search organizations", async (done) => {
+  it("should search organizations", async () => {
     const limit = 4;
     const results = await service.search.organizations({
       field_ids: ["identifier", "short_description"],
@@ -62,11 +62,9 @@ describe("service.search", () => {
       expect(properties.identifier.value).toBeTruthy();
       expect(properties.short_description).toBeTruthy();
     });
-
-    done();
   });
 
-  it("should search people", async (done) => {
+  it("should search people", async () => {
     const limit = 4;
     const results = await service.search.people({
       field_ids: ["name", "identifier", "short_description"],
@@ -105,11 +103,9 @@ describe("service.search", () => {
       expect(properties.short_description).toBeTruthy();
       expect(properties.name).toBeTruthy();
     });
-
-    done();
   });
 
-  it("should search principals", async (done) => {
+  it("should search principals", async () => {
     const limit = 4;
     const results = await service.search.people({
       field_ids: ["name", "identifier", "short_description"],
@@ -142,7 +138,5 @@ describe("service.search", () => {
       expect(properties.short_description).toBeTruthy();
       expect(properties.name).toBeTruthy();
     });
-
-    done();
   });
 });

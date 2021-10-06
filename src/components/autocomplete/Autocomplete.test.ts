@@ -8,7 +8,7 @@ describe("service.autocomplete", () => {
     expect(service.autocomplete).toBeInstanceOf(Autocomplete);
   });
 
-  it("should return", async (done) => {
+  it("should return", async () => {
     const { entities } = await service.autocomplete.search("Microsoft", [
       "organizations",
     ]);
@@ -19,7 +19,5 @@ describe("service.autocomplete", () => {
       expect(entity.identifier.permalink).toBeTruthy();
       expect(entity.identifier.value).toBeTruthy();
     });
-
-    done();
   });
 });
