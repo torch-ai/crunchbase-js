@@ -39,5 +39,8 @@
   "dependencies": {
     "axios": "^0.21.1",
     "tslib": "^2.0.3"
+  },
+  "peerDependencies": {
+    "follow-redirects": ">= 1.14.7"
   }
 }
