@@ -1,5 +1,6 @@
 import AbstractComponent from "../AbstractComponent";
 import { IEntitySearch, IEntitySearchReturn } from "./Search.types";
+import { IFundingRound } from "../entities/types/FundingRound.types";
 import { IOrganization } from "../entities/types/Organization.types";
 import { IPerson } from "../entities/types/Person.types";
 import { IPrincipal } from "../entities/types/Principal.types";
@@ -32,6 +33,16 @@ export default class Search extends AbstractComponent {
   ): IEntitySearchReturn<IPrincipal> {
     const { data } = await this.client.post<IEntitySearchReturn<IPrincipal>>(
       Search.BASE + "principals",
+      params
+    );
+    return data;
+  }
+
+  public async fundingRounds(
+    params: IEntitySearch<IFundingRound>
+  ): IEntitySearchReturn<IFundingRound> {
+    const { data } = await this.client.post<IEntitySearchReturn<IFundingRound>>(
+      Search.BASE + "funding_rounds",
       params
     );
     return data;
