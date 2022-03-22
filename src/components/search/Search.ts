@@ -1,8 +1,9 @@
 import AbstractComponent from "../AbstractComponent";
 import { IEntitySearch, IEntitySearchReturn } from "./Search.types";
-import { IOrganization } from "../entities/types/Organization.types";
-import { IPerson } from "../entities/types/Person.types";
-import { IPrincipal } from "../entities/types/Principal.types";
+import { IOrganization } from "../entities";
+import { IFundingRound } from "../entities";
+import { IPerson } from "../entities";
+import { IPrincipal } from "../entities";
 
 export default class Search extends AbstractComponent {
   private static BASE = "searches/";
