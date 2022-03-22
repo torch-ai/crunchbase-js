@@ -139,4 +139,39 @@ describe("service.search", () => {
       expect(properties.name).toBeTruthy();
     });
   });
+
+  it("should search funding rounds", async () => {
+    const limit = 4;
+    const results = await service.search.fundingRounds({
+      field_ids: ["name", "identifier", "announced_on"],
+      order: [
+        {
+          field_id: "announced_on",
+          sort: "asc",
+        },
+      ],
+      query: [
+        {
+          type: "predicate",
+          field_id: "announced_on",
+          operator_id: "between",
+          values: ["2022-03-01", "2022-04-01"],
+        },
+      ],
+      limit,
+    });
+
+    expect(results.count).toBeGreaterThanOrEqual(0);
+    expect(Array.isArray(results.entities)).toBeTruthy();
+    expect(results.entities.length).toBe(limit);
+    results.entities.forEach(({ uuid, properties }) => {
+      expect(uuid).toBeTruthy();
+      expectIdentifier(properties);
+      expect(properties.identifier.uuid).toBe(uuid);
+      expect(properties.identifier.permalink).toBeTruthy();
+      expect(properties.identifier.value).toBeTruthy();
+      expect(properties.announced_on).toBeTruthy();
+      expect(properties.name).toBeTruthy();
+    });
+  });
 });
