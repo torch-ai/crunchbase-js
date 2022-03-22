@@ -21,25 +21,25 @@ export interface IEntitySearch<T> {
   before_id?: string;
 }
 
-interface IOrder<T> {
+export interface IOrder<T> {
   field_id: InterfaceKeys<T> | string;
   sort: Order;
   nulls?: "first" | "last";
 }
 
-interface IPredicate<T> {
+export interface IPredicate<T> {
   type: "predicate";
   field_id: InterfaceKeys<T> | string;
   operator_id: Operator;
   values?: (boolean | string | number | ISearchParamsQueryCurrencyValue)[];
 }
 
-interface ISearchParamsQueryCurrencyValue {
+export interface ISearchParamsQueryCurrencyValue {
   currency: CurrencyCode;
   value: number;
 }
 
-interface IEntityResult<T> {
+export interface IEntityResult<T> {
   count: number;
   entities: {
     uuid: uuid;
