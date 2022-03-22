@@ -37,4 +37,18 @@ export default class Search extends AbstractComponent {
     );
     return data;
   }
+
+  public async fundingRounds(
+    params: IEntitySearch<IFundingRound>
+  ): IEntitySearchReturn<IFundingRound> {
+    try {
+      const { data } = await this.client.post<
+        IEntitySearchReturn<IFundingRound>
+      >(Search.BASE + "funding_rounds", params);
+
+      return data;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
