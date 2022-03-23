@@ -1,6 +1,6 @@
 {
   "name": "@torch-ai/crunchbase",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "Provides an api client and types for the Crunchbase service",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
