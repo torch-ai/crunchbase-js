@@ -33,7 +33,7 @@ export interface IAutocompleteResult {
   entities: IAutocompleteEntity[];
 }
 
-interface IAutocompleteEntity {
+export interface IAutocompleteEntity {
   identifier: IEntityIdentifier;
   facet_ids: string[];
   short_description: string;
