@@ -1,5 +1,9 @@
 import AbstractComponent from "../AbstractComponent";
-import { IAutocompleteParams, IAutocompleteResult } from "./Autocomplete.types";
+import {
+  AutocompleteCollectionId,
+  IAutocompleteParams,
+  IAutocompleteResult,
+} from "./Autocomplete.types";
 
 export default class Autocomplete extends AbstractComponent {
   private static URI = "autocompletes";
@@ -12,12 +16,15 @@ export default class Autocomplete extends AbstractComponent {
    */
   public async search(
     query: IAutocompleteParams["query"],
-    collection_ids?: IAutocompleteParams["collection_ids"],
+    collection_ids?: AutocompleteCollectionId[],
     limit?: IAutocompleteParams["limit"]
   ): Promise<IAutocompleteResult> {
     const params: IAutocompleteParams = { query };
+
     if (collection_ids) {
-      params.collection_ids = collection_ids;
+      // 'collection_ids' in the autocomplete endpoint expects a comma separated list.
+      // We stringify the array before calling the endpoint.
+      params.collection_ids = collection_ids.join(",");
     }
     if (limit) {
       params.limit = limit;
