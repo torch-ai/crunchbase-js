@@ -4,7 +4,11 @@ export interface IAutocompleteParams {
   query: string;
   collection_ids?: (
     | "organizations"
+    | "organization.companies"
+    | "organization.investors"
+    | "organization.schools"
     | "people"
+    | "person.investors"
     | "funding_rounds"
     | "acquisitions"
     | "investments"
@@ -18,6 +22,7 @@ export interface IAutocompleteParams {
     | "category_groups"
     | "locations"
     | "jobs"
+    | "principals"
   )[];
   limit?: number;
 }
