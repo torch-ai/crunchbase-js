@@ -16,8 +16,10 @@ export default class Autocomplete extends AbstractComponent {
     limit?: IAutocompleteParams["limit"]
   ): Promise<IAutocompleteResult> {
     const params: IAutocompleteParams = { query };
-    if (collection_ids) {
-      params.collection_ids = collection_ids;
+    if (Array.isArray(collection_ids)) {
+      // 'collection_ids' in the autocomplete endpoint expects a comma separated list
+      // as a workaround, we stringify the array before calling the endpoint
+      params.collection_ids = collection_ids.join(',') as any;
     }
     if (limit) {
       params.limit = limit;
